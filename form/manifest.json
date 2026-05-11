@@ -1,0 +1,13 @@
+{
+  "name": "Finanzas P&J — Cargar",
+  "short_name": "Cargar",
+  "description": "Cargá un gasto, ingreso o movimiento en 4 taps",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2C5BEC",
+  "icons": [
+    { "src": "icons/app-icon-form.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

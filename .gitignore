@@ -1,0 +1,21 @@
+# Configuración local con secretos (nunca versionar)
+config.local.js
+*.local.js
+.env.local
+.env
+
+# clasp (Apps Script CLI) — contiene scriptId
+.clasp.json
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/

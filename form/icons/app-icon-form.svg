@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"></rect>
+  <rect x="48" y="48" width="416" height="416" rx="80" fill="none" stroke="#0B1220" stroke-width="2" opacity="0.12"></rect>
+  
+  <g stroke="#0B1220" stroke-width="36" stroke-linecap="round">
+    <line x1="256" y1="156" x2="256" y2="356"></line>
+    <line x1="156" y1="256" x2="356" y2="256"></line>
+  </g>
+  
+  <circle cx="396" cy="116" r="28" fill="#16A36A"></circle>
+  
+  <text x="464" y="464" font-family="Georgia, serif" font-style="italic" font-size="48" text-anchor="end" fill="#0B1220">P&amp;J</text>
+</svg>
