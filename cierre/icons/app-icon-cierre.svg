@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"></rect>
+  <rect x="48" y="48" width="416" height="416" rx="80" fill="none" stroke="#0B1220" stroke-width="2" opacity="0.12"></rect>
+  
+  <g stroke="#0B1220" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="116" y="156" width="280" height="240" rx="16"></rect>
+    <line x1="116" y1="216" x2="396" y2="216"></line>
+    <line x1="180" y1="120" x2="180" y2="180"></line>
+    <line x1="332" y1="120" x2="332" y2="180"></line>
+  </g>
+  
+  <circle cx="332" cy="332" r="34" fill="#6B5BD2"></circle>
+  
+  <g fill="#0B1220" opacity="0.4">
+    <rect x="158" y="252" width="20" height="4"></rect>
+    <rect x="218" y="252" width="20" height="4"></rect>
+    <rect x="278" y="252" width="20" height="4"></rect>
+    <rect x="338" y="252" width="20" height="4"></rect>
+    <rect x="158" y="312" width="20" height="4"></rect>
+    <rect x="218" y="312" width="20" height="4"></rect>
+    <rect x="278" y="312" width="20" height="4"></rect>
+  </g>
+  <text x="464" y="464" font-family="Georgia, serif" font-style="italic" font-size="48" text-anchor="end" fill="#0B1220">P&amp;J</text>
+</svg>
