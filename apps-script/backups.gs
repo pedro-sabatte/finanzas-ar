@@ -2,18 +2,17 @@
 // backups.gs — Export semanal de todas las hojas a Google Drive como CSV
 // ============================================================
 
-const HOJAS_A_BACKUPEAR = [
-  'movimientos', 'cuotas', 'inversiones_compras', 'inversiones_valuaciones',
-  'recurrentes', 'cuentas', 'tarjetas', 'categorias', 'objetivos',
-  'cotizaciones', 'patrimonio_historico'
-];
-
 /**
  * Exporta todas las hojas como CSV a la carpeta de Drive configurada.
  * Se llama automáticamente los domingos a las 3am.
  * La primera vez que se ejecuta pide la carpeta de destino al usuario (ver setup).
  */
 function backupSemanal() {
+  const HOJAS_A_BACKUPEAR = [
+    'movimientos', 'cuotas', 'inversiones_compras', 'inversiones_valuaciones',
+    'recurrentes', 'cuentas', 'tarjetas', 'categorias', 'objetivos',
+    'cotizaciones', 'patrimonio_historico'
+  ];
   const folderId = PropertiesService.getScriptProperties().getProperty('BACKUP_FOLDER_ID');
   if (!folderId) {
     console.warn('BACKUP_FOLDER_ID no configurado. Ve a Propiedades del script y agrega el ID de la carpeta de Drive.');
