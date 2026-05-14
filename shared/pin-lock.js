@@ -14,7 +14,6 @@
  *       })()
  *  3. Copiá el hash y reemplazá CORRECT_HASH abajo
  *
- * PIN por defecto: 1234
  * ──────────────────────────────────────────────────────────────
  */
 
@@ -22,8 +21,8 @@
   'use strict';
 
   // ─── Configuración ─────────────────────────────────────────────────────────
-  // SHA-256 del PIN. Por defecto: "1234"
-  const CORRECT_HASH = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
+  // SHA-256 del PIN.
+  const CORRECT_HASH = 'd74fe97872d8a425b5263add13d51a1066bf0b2cdd5e368d316dfe31048b2104';
   const UNLOCK_HOURS = 8;
   const UNLOCK_MS    = UNLOCK_HOURS * 60 * 60 * 1000;
   const STORAGE_KEY  = 'jp_unlock_ts';
