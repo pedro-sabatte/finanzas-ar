@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Dashboard">
+  <title>Finanzas J&amp;P — Dashboard</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/app-icon-dashboard.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       DESIGN TOKENS — Finanzas J&P (design system completo)
+    ===================================================== */
+    :root {
+      --paper:        #FFFFFF;
+      --paper-2:      #F6F7F9;
+      --paper-3:      #EBEDF1;
+      --ink:          #0B1220;
+      --ink-2:        #4B5563;
+      --ink-3:        #8A93A2;
+      --ink-on-color: #FFFFFF;
+      --hairline:     rgba(11,18,32,0.08);
+      --hairline-2:   rgba(11,18,32,0.14);
+      --primary:      #2C5BEC;
+      --primary-2:    #4970F0;
+      --primary-soft: #2C5BEC0F;
+      --peso:         #16A36A;
+      --peso-soft:    #16A36A14;
+      --dolar:        #2C5BEC;
+      --dolar-soft:   #2C5BEC14;
+      --pedro:        #2C5BEC;
+      --juani:        #E26A77;
+      --conjunto:     #6B5BD2;
+      --conjunto-soft:#6B5BD214;
+      --positive:     #16A36A;
+      --positive-soft:#16A36A14;
+      --alert:        #DC2A2A;
+      --alert-soft:   #DC2A2A14;
+      --warning:      #E6A100;
+      --warning-soft: #E6A10014;
+      --font-sans:    'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font-serif:   'Source Serif 4', ui-serif, Georgia, serif;
+      --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px;
+      --s-6: 24px; --s-7: 32px; --s-8: 48px; --s-9: 64px;
+      --r-1: 6px; --r-2: 10px; --r-3: 14px; --r-4: 22px; --r-full: 999px;
+      --shadow-1: 0 1px 0 rgba(21,24,29,0.03), 0 6px 16px -8px rgba(21,24,29,0.08);
+      --shadow-2: 0 2px 0 rgba(21,24,29,0.03), 0 14px 32px -12px rgba(21,24,29,0.16);
+      --ease:      cubic-bezier(0.2,0,0,1);
+      --dur-fast:  180ms;
+      --dur-base:  240ms;
+      --dur-slow:  320ms;
+      --gutter:    20px;
+    }
+
+    [x-cloak] { display: none !important; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: var(--font-sans);
+      color: var(--ink); background: var(--paper);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'cv11', 'ss01';
+      padding-top: env(safe-area-inset-top);
+    }
+    body { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+    input, button, select, textarea {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'cv11', 'ss01';
+    }
+
+    /* ---- Header blur ---- */
+    .dash-header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--hairline);
+      padding: 14px var(--gutter);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .brand {
+      font-family: var(--font-serif); font-size: 20px;
+      color: var(--ink); letter-spacing: -0.02em;
+    }
+    .brand em { color: var(--primary); font-style: italic; }
+    .header-date { font-size: 12px; color: var(--ink-2); font-weight: 500; }
+    .header-refresh {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      color: var(--ink-3); font-size: 18px;
+      transition: transform 0.4s var(--ease), color var(--dur-fast) var(--ease);
+    }
+    .header-refresh:hover { color: var(--ink); }
+    .header-refresh.spinning { animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- Banner ---- */
+    .banner {
+      display: flex; align-items: center; gap: 10px;
+      margin: 14px var(--gutter) 0; padding: 10px 12px;
+      border-radius: var(--r-2); cursor: pointer;
+      transition: opacity var(--dur-fast) var(--ease);
+    }
+    .banner:hover { opacity: 0.85; }
+    .banner--cierre { background: var(--conjunto-soft); border: 1px solid rgba(107,91,210,0.2); }
+    .banner--alert  { background: var(--alert-soft);   border: 1px solid rgba(220,42,42,0.2); }
+    .banner__dot { width: 7px; height: 7px; border-radius: var(--r-full); flex-shrink: 0; }
+    .banner__text { flex: 1; font-size: 13px; color: var(--ink); }
+    .banner__arrow { color: var(--ink-2); font-size: 16px; }
+
+    /* ---- Section title ---- */
+    .section-title {
+      padding: 24px var(--gutter) 8px;
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .section-title h2 {
+      margin: 0; font-size: 18px; font-weight: 600;
+      letter-spacing: -0.005em; color: var(--ink);
+    }
+    .section-title span { font-size: 12px; color: var(--ink-2); }
+
+    /* ---- Tarjeta del día ---- */
+    .tarjeta-hero {
+      margin: 18px var(--gutter) 0; padding: 20px 22px;
+      border: 1px solid var(--hairline); border-radius: var(--r-3);
+    }
+    .tarjeta-hero__kicker {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-3);
+    }
+    .tarjeta-hero__nombre {
+      font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+      color: var(--ink); margin-top: 6px; line-height: 1.2;
+    }
+    .tarjeta-hero__sub { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+    .tarjeta-hero__footer {
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px solid var(--hairline);
+      display: flex; justify-content: space-between;
+      cursor: pointer;
+    }
+    .tarjeta-hero__footer span { font-size: 12px; }
+    .tarjetas-list { display: none; padding: 0 0 4px; flex-direction: column; gap: 0; }
+    .tarjetas-list.open { display: flex; }
+    .tarjeta-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid var(--hairline);
+      font-size: 13px;
+    }
+    .tarjeta-row:last-child { border-bottom: 0; }
+    .tarjeta-row__dias { color: var(--ink-3); }
+
+    /* ---- Filter chips ---- */
+    .filter-chips { display: flex; gap: 6px; padding: 0 var(--gutter); margin-bottom: 10px; }
+    .filter-chip {
+      padding: 6px 12px; border-radius: var(--r-full); font-size: 12px; font-weight: 500;
+      cursor: pointer; border: 1px solid var(--hairline-2);
+      background: transparent; color: var(--ink-2); font-family: var(--font-sans);
+      transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+    }
+    .filter-chip.active {
+      border-color: var(--ink); background: var(--ink); color: var(--ink-on-color);
+    }
+
+    /* ---- KPI grid ---- */
+    .kpi-grid {
+      padding: 0 var(--gutter);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .kpi-card {
+      background: var(--paper); border: 1px solid var(--hairline);
+      border-radius: var(--r-2); padding: 14px 16px;
+    }
+    .kpi-card__label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--ink-2);
+    }
+    .kpi-card__value {
+      font-size: 20px; font-weight: 500; letter-spacing: -0.005em;
+      margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums;
+    }
+    .kpi-card__sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+
+    /* ---- Patrimonio card ---- */
+    .patrimonio-card {
+      margin: 0 var(--gutter);
+      border: 1px solid var(--hairline); border-radius: var(--r-3); overflow: hidden;
+    }
+    /* Banknote rosette — design spec decorative motif on patrimonio card */
+    .patrimonio-card__top {
+      padding: 22px 22px 18px; position: relative;
+    }
+    .patrimonio-card__kicker {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-2);
+    }
+    .patrimonio-card__total {
+      font-size: 36px; font-weight: 500; letter-spacing: -0.01em;
+      color: var(--ink); margin-top: 6px; font-variant-numeric: tabular-nums;
+    }
+    .patrimonio-card__var { font-size: 13px; margin-top: 4px; }
+    .patrimonio-card__chart { margin-top: 14px; }
+    .patrimonio-card__bottom {
+      padding: 14px 22px 20px; border-top: 1px solid var(--hairline);
+    }
+    /* Meta name in Source Serif 4 — editorial serif moment per design spec */
+    .meta-title {
+      font-family: var(--font-serif); font-size: 19px;
+      color: var(--ink); letter-spacing: -0.015em;
+    }
+    .meta-track {
+      margin-top: 10px; height: 8px; background: var(--paper-3);
+      border-radius: var(--r-full); overflow: hidden;
+    }
+    .meta-fill {
+      height: 100%; background: var(--ink); border-radius: var(--r-full);
+      transition: width 0.5s var(--ease);
+    }
+    .meta-labels {
+      margin-top: 6px; display: flex; justify-content: space-between;
+      font-size: 12px;
+    }
+
+    /* ---- Vencimientos ---- */
+    .venc-row {
+      padding: 12px 0; border-bottom: 1px solid var(--hairline);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .venc-row:last-child { border-bottom: 0; }
+    .venc-date { width: 44px; text-align: center; flex-shrink: 0; }
+    .venc-day {
+      font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1;
+    }
+    .venc-month {
+      font-size: 10px; color: var(--ink-3); margin-top: 2px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .venc-what { font-size: 14px; font-weight: 500; color: var(--ink); }
+    .venc-sub { font-size: 12px; color: var(--ink-3); }
+    .venc-tag {
+      font-size: 11px; color: var(--ink-3); flex-shrink: 0; font-weight: 500;
+    }
+
+    /* ---- Donut chart ---- */
+    .donut-wrap {
+      margin: 0 var(--gutter); padding: 16px 18px;
+      border: 1px solid var(--hairline); border-radius: var(--r-2);
+    }
+    .donut-inner { display: flex; align-items: center; gap: 18px; }
+    .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .donut-legend-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .donut-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .donut-legend-label { color: var(--ink); flex: 1; }
+    .donut-legend-pct { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+    /* ---- Movement rows ---- */
+    .mov-row {
+      padding: 10px 0; border-bottom: 1px solid var(--hairline);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .mov-row:last-child { border-bottom: 0; }
+    .mov-title { font-size: 14px; font-weight: 500; }
+    .mov-sub { font-size: 12px; color: var(--ink-3); }
+    .mov-amount {
+      font-size: 14px; font-weight: 500;
+      font-variant-numeric: tabular-nums; flex-shrink: 0;
+    }
+
+    /* ---- Inversiones ---- */
+    .inv-row { padding: 12px 0; border-bottom: 1px solid var(--hairline); }
+    .inv-row:last-child { border-bottom: 0; }
+    .inv-ticker { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .inv-meta { font-size: 12px; color: var(--ink-3); }
+    .inv-amount { font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+    /* ---- Skeleton loader ---- */
+    .skeleton {
+      background: linear-gradient(90deg,
+        var(--paper-2) 25%, var(--paper-3) 50%, var(--paper-2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--r-1);
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ---- Empty state ---- */
+    .empty {
+      text-align: center; color: var(--ink-3);
+      font-size: 14px; padding: 32px var(--gutter); line-height: 1.6;
+    }
+    .empty small { font-size: 12px; display: block; margin-top: 4px; }
+
+    /* ---- Nav tabs ---- */
+    .nav-tabs {
+      display: flex; overflow-x: auto; gap: 0;
+      border-bottom: 1px solid var(--hairline);
+      padding: 0 var(--gutter);
+      scrollbar-width: none;
+      position: sticky; top: 49px; z-index: 9;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(4px);
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      border: none; background: transparent; cursor: pointer;
+      padding: 10px 16px;
+      font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+      white-space: nowrap; color: var(--ink-3); position: relative; flex-shrink: 0;
+      transition: color var(--dur-fast) var(--ease);
+    }
+    .nav-tab.active { color: var(--ink); }
+    .nav-tab.active::after {
+      content: ''; position: absolute; bottom: -1px;
+      left: 16px; right: 16px; height: 2px;
+      background: var(--primary); border-radius: 2px;
+    }
+
+    .bottom-spacer { height: 40px; }
+  </style>
+</head>
+<body>
+
+<script src="config.local.js" onerror="console.warn('config.local.js no encontrado')"></script>
+<script src="../shared/formatters.js"></script>
+<script src="../shared/api-client.js"></script>
+
+<div x-data="dashApp()" x-init="init()">
+
+  <!-- HEADER -->
+  <div class="dash-header">
+    <div class="brand">J<em>&amp;</em>P</div>
+    <div style="flex:1"></div>
+    <div class="header-date" x-text="fechaHoy()"></div>
+    <button class="header-refresh" :class="loading ? 'spinning' : ''"
+      @click="refrescar()" title="Actualizar">↻</button>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs">
+    <template x-for="tab in navTabs" :key="tab.id">
+      <button class="nav-tab" :class="vistaActual === tab.id ? 'active' : ''"
+        @click="vistaActual = tab.id" x-text="tab.label"></button>
+    </template>
+  </div>
+
+  <!-- ===================== VISTA: INICIO ===================== -->
+  <div x-show="vistaActual === 'inicio'">
+
+    <!-- Banner cierre (últimos 5 días del mes) -->
+    <div class="banner banner--cierre" x-show="mostrarBannerCierre" x-cloak
+      @click="window.location.href='../cierre/'">
+      <div class="banner__dot" style="background:var(--conjunto)"></div>
+      <div class="banner__text">Es hora del cierre mensual → <b>completar ahora</b></div>
+      <div class="banner__arrow">→</div>
+    </div>
+
+    <!-- Banners de anomalías -->
+    <template x-for="alerta in alertas" :key="alerta.categoria">
+      <div class="banner banner--alert">
+        <div class="banner__dot" style="background:var(--alert)"></div>
+        <div class="banner__text">
+          Gasto inusual: <b x-text="alerta.categoria"></b>
+          <span x-text="' +' + alerta.variacion_pct + '% vs promedio'"></span>
+        </div>
+      </div>
+    </template>
+
+    <!-- ---- TARJETA DEL DÍA ---- -->
+    <div class="tarjeta-hero" x-show="tarjeta">
+      <div class="tarjeta-hero__kicker">Hoy conviene usar</div>
+      <div class="tarjeta-hero__nombre" x-text="tarjeta?.tarjeta_recomendada?.nombre || '—'"></div>
+      <div class="tarjeta-hero__sub" x-text="tarjeta?.explicacion || ''"></div>
+      <div class="tarjeta-hero__footer"
+        @click="mostrarTodasTarjetas = !mostrarTodasTarjetas">
+        <span style="color:var(--ink-2); font-size:12px">Ver todas las tarjetas</span>
+        <span style="color:var(--ink); font-weight:500; font-size:12px"
+          x-text="mostrarTodasTarjetas ? '↑' : '↗'"></span>
+      </div>
+      <div class="tarjetas-list" :class="mostrarTodasTarjetas ? 'open' : ''">
+        <template x-for="t in tarjeta?.todas_las_tarjetas || []" :key="t.nombre">
+          <div class="tarjeta-row">
+            <span x-text="t.nombre" style="color:var(--ink); font-weight:500"></span>
+            <span class="tarjeta-row__dias"
+              x-text="'cerró hace ' + t.diasDesdeCierre + ' días'"></span>
+          </div>
+        </template>
+      </div>
+    </div>
+    <!-- Skeleton tarjeta -->
+    <div class="tarjeta-hero skeleton" x-show="!tarjeta && loading"
+      style="height:120px; margin:18px 20px 0"></div>
+
+    <!-- ---- RESUMEN DEL MES ---- -->
+    <div class="section-title">
+      <h2>Resumen del mes</h2>
+      <span x-text="fmt.mes(mesActual)"></span>
+    </div>
+
+    <div class="filter-chips">
+      <template x-for="f in ['Conjunto','Pedro','Juani']" :key="f">
+        <button class="filter-chip" :class="filtro === f ? 'active' : ''"
+          @click="filtro = f; cargarResumen()"
+          x-text="f"></button>
+      </template>
+    </div>
+
+    <div class="kpi-grid">
+      <!-- Ingresos -->
+      <div class="kpi-card">
+        <div class="kpi-card__label">Ingresos</div>
+        <div class="kpi-card__value" style="color:var(--peso)"
+          x-text="resumen ? '$ ' + fmt.ars(resumen.ingresos?.ars) : '—'"></div>
+        <div class="kpi-card__sub"
+          x-text="resumen ? 'U$S ' + fmt.usd(resumen.ingresos?.usd_equiv, 0) + ' equiv' : '—'"></div>
+      </div>
+      <!-- Gastos -->
+      <div class="kpi-card">
+        <div class="kpi-card__label">Gastos</div>
+        <div class="kpi-card__value"
+          x-text="resumen ? '$ ' + fmt.ars(resumen.gastos?.ars) : '—'"></div>
+        <div class="kpi-card__sub"
+          x-text="compromiso ? 'Compr. $ ' + fmt.ars(compromiso.gasto_comprometido_ars) : ''"></div>
+      </div>
+      <!-- Ahorro -->
+      <div class="kpi-card">
+        <div class="kpi-card__label"
+          x-text="resumen?.objetivos?.ahorro_ars ? 'Ahorro · obj $ ' + fmt.ars(resumen.objetivos.ahorro_ars, 0) : 'Ahorro'"></div>
+        <div class="kpi-card__value" :style="`color: ${ahorroColor()}`"
+          x-text="resumen ? '$ ' + fmt.ars((resumen.ahorro?.usd_equiv || 0) * (resumen.cotizacion_mep || 1200)) : '—'"></div>
+        <div class="kpi-card__sub"
+          x-text="resumen && resumen.objetivos?.ahorro_ars ? (ahorroOk() ? '✓ por encima' : '✗ por debajo') : ''"></div>
+      </div>
+      <!-- vs mes anterior -->
+      <div class="kpi-card">
+        <div class="kpi-card__label">vs mes anterior</div>
+        <div class="kpi-card__value"
+          :style="`color: ${(resumen?.variacion_vs_mes_anterior_pct || 0) <= 0 ? 'var(--positive)' : 'var(--alert)'}`"
+          x-text="resumen?.variacion_vs_mes_anterior_pct != null ? fmt.variacion(resumen.variacion_vs_mes_anterior_pct).texto : '—'"></div>
+        <div class="kpi-card__sub"
+          x-text="(resumen?.variacion_vs_mes_anterior_pct || 0) <= 0 ? 'gasto bajó' : 'gasto subió'"></div>
+      </div>
+    </div>
+
+    <!-- ---- PATRIMONIO ---- -->
+    <div class="section-title"><h2>Patrimonio</h2></div>
+    <div class="patrimonio-card" x-show="patrimonio">
+      <div class="patrimonio-card__top">
+        <div class="patrimonio-card__kicker">Patrimonio total</div>
+        <div class="patrimonio-card__total"
+          x-text="patrimonio ? 'U$S ' + fmt.usd(patrimonio.patrimonio_total_usd, 0) : '—'"></div>
+        <div class="patrimonio-card__var"
+          :style="`color: ${patrimonioVar >= 0 ? 'var(--positive)' : 'var(--alert)'}`"
+          x-show="patrimonioVar !== null"
+          x-text="fmt.variacion(patrimonioVar).texto + ' vs mes anterior'"></div>
+        <div class="patrimonio-card__chart">
+          <canvas id="patrimonioChart" height="60"></canvas>
+        </div>
+      </div>
+      <div class="patrimonio-card__bottom">
+        <div style="display:flex; align-items:baseline; justify-content:space-between">
+          <!-- Source Serif 4 — editorial serif moment para la meta largo plazo -->
+          <div class="meta-title">⭐ Terreno + Casa</div>
+          <span style="font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:0.06em; font-weight:500">largo plazo</span>
+        </div>
+        <div class="meta-track">
+          <div class="meta-fill" :style="`width: ${metaPct()}%`"></div>
+        </div>
+        <div class="meta-labels">
+          <span style="color:var(--ink-2)"
+            x-text="metaPct() + '% · U$S ' + fmt.usd(patrimonio?.patrimonio_total_usd, 0) + ' de U$S ' + fmt.usd(meta?.monto_objetivo, 0)"></span>
+        </div>
+      </div>
+    </div>
+    <!-- Skeleton patrimonio -->
+    <div class="patrimonio-card skeleton" x-show="!patrimonio && loading" style="height:200px"></div>
+
+    <!-- ---- VENCIMIENTOS ---- -->
+    <div class="section-title">
+      <h2>Próximos vencimientos</h2>
+      <span>30 días</span>
+    </div>
+    <div style="padding:0 var(--gutter)">
+      <template x-if="vencimientos.length === 0 && !loading">
+        <div class="empty">Sin vencimientos en los próximos 30 días</div>
+      </template>
+      <template x-for="v in vencimientos.slice(0,8)" :key="v.fecha + v.nombre">
+        <div class="venc-row">
+          <div class="venc-date">
+            <div class="venc-day"
+              :style="esMuyProximo(v.fecha) ? 'color:var(--alert)' : 'color:var(--ink)'"
+              x-text="v.fecha.split('-')[2]"></div>
+            <div class="venc-month"
+              x-text="['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][parseInt(v.fecha.split('-')[1])-1]"></div>
+          </div>
+          <div style="flex:1">
+            <div class="venc-what" x-text="v.nombre"></div>
+            <div class="venc-sub"
+              x-text="v.tipo === 'cuota' ? 'Cuota · ' + (v.moneda === 'ARS' ? '$ ' : 'U$S ') + fmt.ars(v.monto)
+                : v.tipo === 'recurrente' ? 'Recurrente' + (v.monto ? ' · $ ' + fmt.ars(v.monto) : ' · monto pendiente')
+                : ''"></div>
+          </div>
+          <div class="venc-tag"
+            x-show="v.tipo === 'tarjeta_vencimiento' || v.tipo === 'tarjeta_cierre'"
+            x-text="v.tipo === 'tarjeta_cierre' ? 'Cierre' : 'Vto'"></div>
+        </div>
+      </template>
+    </div>
+
+    <!-- ---- GASTOS POR CATEGORÍA ---- -->
+    <div class="section-title">
+      <h2>Gastos por categoría</h2>
+      <span x-text="fmt.mes(mesActual).split(' ')[0]"></span>
+    </div>
+    <div class="donut-wrap" x-show="gastosCat.length > 0">
+      <div class="donut-inner">
+        <canvas id="donutChart" width="130" height="130" style="flex-shrink:0"></canvas>
+        <div class="donut-legend">
+          <template x-for="(cat, i) in gastosCat.slice(0, 6)" :key="cat.categoria">
+            <div class="donut-legend-row">
+              <div class="donut-legend-dot" :style="`background:${donutColor(i)}`"></div>
+              <span class="donut-legend-label">
+                <span x-text="cat.categoria"></span>
+                <span x-show="alertas.some(a => a.categoria === cat.categoria)"
+                  style="color:var(--alert); font-size:11px"> ⚠</span>
+              </span>
+              <span class="donut-legend-pct" x-text="catPct(cat) + '%'"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+    <div class="empty" x-show="gastosCat.length === 0 && !loading">Sin gastos este mes</div>
+
+    <!-- ---- ÚLTIMOS MOVIMIENTOS ---- -->
+    <div class="section-title">
+      <h2>Últimos movimientos</h2>
+      <span style="cursor:pointer; color:var(--primary)"
+        @click="vistaActual='movimientos'">ver todos ↗</span>
+    </div>
+    <div style="padding:0 var(--gutter)">
+      <template x-for="mv in ultimosMov" :key="mv.id">
+        <div class="mov-row">
+          <div style="flex:1">
+            <div class="mov-title" x-text="mv.titulo || mv.categoria || mv.tipo"></div>
+            <div class="mov-sub"
+              x-text="(mv.categoria || mv.tipo) + ' · ' + fmt.fecha(mv.fecha) + (mv.quien_gasto ? ' · ' + mv.quien_gasto : '')"></div>
+          </div>
+          <div class="mov-amount"
+            :style="`color: ${mv.moneda === 'USD' ? 'var(--dolar)' : 'var(--peso)'}`"
+            x-text="(mv.moneda === 'ARS' ? '$ ' : 'U$S ') + fmt.ars(mv.monto)"></div>
+        </div>
+      </template>
+      <div class="empty" x-show="ultimosMov.length === 0 && !loading">Sin movimientos cargados</div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+  </div><!-- /vista inicio -->
+
+  <!-- ===================== VISTA: INVERSIONES ===================== -->
+  <div x-show="vistaActual === 'inversiones'" style="padding:16px var(--gutter)">
+    <template x-if="inversiones.length === 0">
+      <div class="empty">
+        No hay inversiones cargadas todavía.
+        <small>Cargalas desde el Form → Mov. interno → Compra activo</small>
+      </div>
+    </template>
+    <template x-for="inv in inversiones" :key="inv.key">
+      <div class="inv-row">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start">
+          <div>
+            <div class="inv-ticker" x-text="inv.activo_ticker"></div>
+            <div class="inv-meta"
+              x-text="inv.plataforma + ' · ' + inv.cantidad + ' unidades'"></div>
+          </div>
+          <div style="text-align:right">
+            <div class="inv-amount"
+              x-text="'U$S ' + fmt.usd(inv.valor_total_usd, 0)"></div>
+            <div style="font-size:12px; color:var(--ink-3)"
+              x-text="inv.moneda + ' ' + fmt.ars(inv.precio_cierre)"></div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <div class="bottom-spacer"></div>
+  </div>
+
+  <!-- ===================== VISTA: MOVIMIENTOS ===================== -->
+  <div x-show="vistaActual === 'movimientos'" style="padding:0 var(--gutter)">
+    <div style="padding:16px 0 8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+      <template x-for="tipo in ['todos','gasto','ingreso','transferencia']" :key="tipo">
+        <button class="filter-chip" :class="filtroMov === tipo ? 'active' : ''"
+          @click="filtroMov = tipo"
+          x-text="tipo === 'todos' ? 'Todos' : tipo.charAt(0).toUpperCase() + tipo.slice(1)"></button>
+      </template>
+    </div>
+    <template x-for="mv in todosLosMov.filter(m => filtroMov === 'todos' || m.tipo === filtroMov)" :key="mv.id">
+      <div class="mov-row">
+        <div style="flex:1">
+          <div class="mov-title" x-text="mv.titulo || mv.categoria || mv.tipo"></div>
+          <div class="mov-sub"
+            x-text="(mv.categoria || mv.tipo) + ' · ' + fmt.fecha(mv.fecha) + (mv.medio_pago ? ' · ' + mv.medio_pago : '')"></div>
+        </div>
+        <div class="mov-amount"
+          :style="`color: ${mv.tipo === 'ingreso' ? 'var(--peso)' : mv.moneda === 'USD' ? 'var(--dolar)' : 'var(--ink)'}`"
+          x-text="(mv.tipo === 'ingreso' ? '+' : '') + (mv.moneda === 'ARS' ? '$ ' : 'U$S ') + fmt.ars(mv.monto)"></div>
+      </div>
+    </template>
+    <div class="bottom-spacer"></div>
+  </div>
+
+  <!-- ===================== VISTA: HISTÓRICO ===================== -->
+  <div x-show="vistaActual === 'historico'" style="padding:16px var(--gutter)">
+    <canvas id="historicoChart" height="200"></canvas>
+    <div class="empty" x-show="!historicoLoaded">Cargando historial…</div>
+    <div class="bottom-spacer"></div>
+  </div>
+
+</div><!-- /app -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+<script src="charts.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+</script>
+</body>
+</html>

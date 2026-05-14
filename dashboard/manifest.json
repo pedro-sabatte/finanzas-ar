@@ -1,0 +1,13 @@
+{
+  "name": "Finanzas P&J — Dashboard",
+  "short_name": "Dashboard",
+  "description": "KPIs, patrimonio, vencimientos y análisis mensual",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "icons": [
+    { "src": "icons/app-icon-dashboard.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

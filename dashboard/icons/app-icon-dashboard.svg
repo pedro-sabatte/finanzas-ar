@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"></rect>
+  <rect x="48" y="48" width="416" height="416" rx="80" fill="none" stroke="#0B1220" stroke-width="2" opacity="0.12"></rect>
+  
+  <g>
+    <rect x="124" y="296" width="64" height="120" rx="8" fill="#0B1220"></rect>
+    <rect x="216" y="220" width="64" height="196" rx="8" fill="#0B1220"></rect>
+    <rect x="308" y="160" width="64" height="256" rx="8" fill="#1A3FA8"></rect>
+  </g>
+  
+  <path d="M124 248 L216 200 L308 152 L372 120" stroke="#0B1220" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.3"></path>
+  <circle cx="372" cy="120" r="14" fill="#1A3FA8"></circle>
+  <text x="464" y="464" font-family="Georgia, serif" font-style="italic" font-size="48" text-anchor="end" fill="#0B1220">P&amp;J</text>
+</svg>
