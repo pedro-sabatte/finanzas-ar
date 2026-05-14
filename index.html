@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Finanzas J&amp;P</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@1,8..60,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0B1220; --ink-2: #4B5563; --ink-3: #8A93A2;
+      --paper: #FFFFFF; --paper-2: #F6F7F9; --hairline: rgba(11,18,32,0.08);
+      --primary: #2C5BEC; --peso: #16A36A; --conjunto: #6B5BD2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--paper-2); color: var(--ink);
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .brand {
+      font-family: 'Source Serif 4', serif;
+      font-style: italic; font-size: 40px;
+      letter-spacing: -0.02em; color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .brand em { color: var(--primary); }
+    .tagline {
+      font-size: 14px; color: var(--ink-3); margin-bottom: 48px;
+      letter-spacing: 0.02em;
+    }
+    .apps { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
+    .app-card {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--paper); border: 1px solid var(--hairline);
+      border-radius: 14px; padding: 18px 20px;
+      text-decoration: none; color: inherit;
+      transition: box-shadow 180ms cubic-bezier(0.2,0,0,1), transform 160ms cubic-bezier(0.2,0,0,1);
+    }
+    .app-card:active { transform: scale(0.98); }
+    .app-card:hover { box-shadow: 0 6px 24px -8px rgba(11,18,32,0.14); }
+    .app-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .app-name { font-size: 16px; font-weight: 600; letter-spacing: -0.005em; }
+    .app-desc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+    .arrow { margin-left: auto; color: var(--ink-3); font-size: 16px; }
+    .footer {
+      margin-top: 48px; font-size: 11px; color: var(--ink-3);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="brand">J<em>&amp;</em>P</div>
+  <div class="tagline">Sistema de finanzas personales</div>
+
+  <div class="apps">
+    <a href="./form/" class="app-card">
+      <div class="app-icon" style="background:#2C5BEC14">
+        <span>+</span>
+      </div>
+      <div>
+        <div class="app-name">Cargar</div>
+        <div class="app-desc">Registrá un gasto, ingreso o movimiento</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="./cierre/" class="app-card">
+      <div class="app-icon" style="background:#6B5BD214">
+        <span>✓</span>
+      </div>
+      <div>
+        <div class="app-name">Cierre mensual</div>
+        <div class="app-desc">Valuaciones, pagos y objetivos del mes</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="./dashboard/" class="app-card">
+      <div class="app-icon" style="background:#16A36A14">
+        <span>↗</span>
+      </div>
+      <div>
+        <div class="app-name">Dashboard</div>
+        <div class="app-desc">KPIs, patrimonio, inversiones y más</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <div class="footer">Pedro &amp; Juani · 2026</div>
+</body>
+</html>
