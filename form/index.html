@@ -8,46 +8,100 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Cargar">
-  <title>Finanzas P&J — Cargar</title>
+  <title>Finanzas P&amp;J — Cargar</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/app-icon-form.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
     /* =====================================================
-       DESIGN TOKENS — Finanzas P&J (desde el design system)
+       DESIGN TOKENS — Finanzas P&J (design system completo)
     ===================================================== */
     :root {
-      --paper:       #FFFFFF;
-      --paper-2:     #F6F7F9;
-      --paper-3:     #EBEDF1;
-      --ink:         #0B1220;
-      --ink-2:       #4B5563;
-      --ink-3:       #8A93A2;
-      --ink-on-color:#FFFFFF;
-      --hairline:    rgba(11,18,32,0.08);
-      --hairline-2:  rgba(11,18,32,0.14);
-      --primary:     #2C5BEC;
-      --primary-2:   #4970F0;
-      --primary-soft:#2C5BEC0F;
-      --peso:        #16A36A;
-      --peso-soft:   #16A36A14;
-      --dolar:       #2C5BEC;
-      --pedro:       #2C5BEC;
-      --juani:       #E26A77;
-      --conjunto:    #6B5BD2;
+      /* Surface */
+      --paper:        #FFFFFF;
+      --paper-2:      #F6F7F9;
+      --paper-3:      #EBEDF1;
+
+      /* Ink */
+      --ink:          #0B1220;
+      --ink-2:        #4B5563;
+      --ink-3:        #8A93A2;
+      --ink-on-color: #FFFFFF;
+
+      /* Hairlines */
+      --hairline:     rgba(11,18,32,0.08);
+      --hairline-2:   rgba(11,18,32,0.14);
+
+      /* Brand / primary */
+      --primary:      #2C5BEC;
+      --primary-2:    #4970F0;
+      --primary-soft: #2C5BEC0F;
+
+      /* Currency */
+      --peso:         #16A36A;
+      --peso-soft:    #16A36A14;
+      --dolar:        #2C5BEC;
+      --dolar-soft:   #2C5BEC14;
+
+      /* People */
+      --pedro:        #2C5BEC;
+      --pedro-soft:   #2C5BEC14;
+      --juani:        #E26A77;
+      --juani-soft:   #E26A7714;
+      --conjunto:     #6B5BD2;
       --conjunto-soft:#6B5BD214;
-      --positive:    #16A36A;
-      --alert:       #DC2A2A;
-      --warning:     #E6A100;
-      --font-sans:   'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-      --font-serif:  'Source Serif 4', ui-serif, Georgia, serif;
-      --ease:        cubic-bezier(0.2,0,0,1);
-      --dur-fast:    180ms;
-      --dur-base:    240ms;
+
+      /* Semantic */
+      --positive:     #16A36A;
+      --positive-soft:#16A36A14;
+      --alert:        #DC2A2A;
+      --alert-soft:   #DC2A2A14;
+      --warning:      #E6A100;
+      --warning-soft: #E6A10014;
+
+      /* Typography */
+      --font-sans:    'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font-serif:   'Source Serif 4', ui-serif, Georgia, serif;
+      --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+      /* Spacing scale */
+      --s-1: 4px;
+      --s-2: 8px;
+      --s-3: 12px;
+      --s-4: 16px;
+      --s-5: 20px;
+      --s-6: 24px;
+      --s-7: 32px;
+      --s-8: 48px;
+      --s-9: 64px;
+
+      /* Radii */
+      --r-1:    6px;
+      --r-2:    10px;
+      --r-3:    14px;
+      --r-4:    22px;
+      --r-full: 999px;
+
+      /* Elevation */
+      --shadow-1: 0 1px 0 rgba(21,24,29,0.03), 0 6px 16px -8px rgba(21,24,29,0.08);
+      --shadow-2: 0 2px 0 rgba(21,24,29,0.03), 0 14px 32px -12px rgba(21,24,29,0.16);
+
+      /* Motion */
+      --ease:      cubic-bezier(0.2,0,0,1);
+      --dur-fast:  180ms;
+      --dur-base:  240ms;
+      --dur-slow:  320ms;
+
+      /* Layout */
+      --col-max: 480px;
+      --gutter:  20px;
     }
+
+    /* Alpine cloak — evita flash de elementos ocultos al iniciar */
+    [x-cloak] { display: none !important; }
 
     *, *::before, *::after { box-sizing: border-box; }
 
@@ -59,16 +113,25 @@
       color: var(--ink);
       background: var(--paper);
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
       font-variant-numeric: tabular-nums;
+      /* Inter: open-4 alt + slashed zero — mejoran legibilidad en finanzas */
+      font-feature-settings: 'cv11', 'ss01';
       /* Seguridad en iPhone X+ */
       padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
     }
 
-    /* App shell — ocupa toda la pantalla como app nativa */
+    /* Todos los inputs y botones también tabular-nums */
+    input, button, select, textarea {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'cv11', 'ss01';
+    }
+
+    /* App shell */
     #app {
       height: 100vh;
-      height: 100dvh; /* dynamic viewport height */
+      height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -78,10 +141,13 @@
     /* ---- Header ---- */
     .app-header {
       position: sticky; top: 0; z-index: 10;
-      background: var(--paper);
+      /* Blur para que el contenido deslice limpio por debajo */
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--hairline);
       padding: 18px 22px 14px;
-      display: flex; align-items: center; gap: 12;
+      display: flex; align-items: center; gap: 12px;
       flex-shrink: 0;
     }
     .app-header__greet {
@@ -102,16 +168,16 @@
     }
     .brand-mark em { color: var(--primary); font-style: italic; }
 
-    /* ---- Person toggle (header right) ---- */
+    /* ---- Person toggle ---- */
     .person-toggle {
       display: flex; gap: 4px;
       background: var(--paper-2);
-      border-radius: 999px; padding: 3px;
+      border-radius: var(--r-full); padding: 3px;
       margin-left: auto;
     }
     .person-toggle button {
       border: none; cursor: pointer;
-      padding: 5px 12px; border-radius: 999px;
+      padding: 5px 12px; border-radius: var(--r-full);
       font-family: var(--font-sans);
       font-size: 12px; font-weight: 600;
       transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
@@ -142,19 +208,19 @@
 
     /* ---- Pending banner ---- */
     .pending-banner {
-      display: flex; align-items: center; gap: 10;
+      display: flex; align-items: center; gap: 10px;
       margin: 12px 20px 0;
       padding: 10px 12px;
-      background: #6B5BD20F;
-      border: 1px solid #6B5BD233;
-      border-radius: 10px;
+      background: var(--conjunto-soft);
+      border: 1px solid rgba(107,91,210,0.2);
+      border-radius: var(--r-2);
       cursor: pointer;
       transition: background var(--dur-fast) var(--ease);
     }
-    .pending-banner:hover { background: #6B5BD21A; }
+    .pending-banner:hover { background: rgba(107,91,210,0.1); }
     .pending-banner__dot {
       width: 7px; height: 7px;
-      border-radius: 999px; background: var(--conjunto);
+      border-radius: var(--r-full); background: var(--conjunto);
       flex-shrink: 0;
     }
     .pending-banner__text { flex: 1; font-size: 13px; color: var(--ink); }
@@ -163,9 +229,8 @@
     /* ---- Scrollable body ---- */
     .form-body {
       flex: 1; overflow-y: auto;
-      padding: 14px 20px 24px;
+      padding: 14px var(--gutter) 24px;
       display: flex; flex-direction: column; gap: 10px;
-      /* Smooth scroll en iOS */
       -webkit-overflow-scrolling: touch;
     }
 
@@ -173,7 +238,7 @@
     .field {
       background: var(--paper);
       border: 1px solid var(--hairline);
-      border-radius: 12px;
+      border-radius: var(--r-3);
       padding: 10px 14px 12px;
       transition: border-color var(--dur-fast) var(--ease);
       cursor: text;
@@ -188,25 +253,25 @@
     .field__label-chevron {
       font-size: 11px; color: var(--ink-3);
       text-transform: none; letter-spacing: 0;
-      transition: transform 200ms;
+      transition: transform var(--dur-base) var(--ease);
     }
-    .field input, .field select {
+    .field input {
       width: 100%; border: none; outline: none;
       background: transparent; padding: 4px 0 0;
       font-family: var(--font-sans);
       font-size: 16px; font-weight: 500;
       color: var(--ink); letter-spacing: -0.005em;
-      appearance: none; -webkit-appearance: none;
     }
-    .field select option { color: var(--ink); background: var(--paper); }
+    .field input::placeholder { color: var(--ink-3); }
 
     /* ---- Amount input ---- */
     .amount-field {
       background: var(--paper);
       border: 1px solid var(--hairline);
-      border-radius: 12px;
+      border-radius: var(--r-3);
       padding: 14px 16px;
       transition: border-color var(--dur-fast) var(--ease);
+      cursor: text;
     }
     .amount-field.focused { border-color: var(--ink); }
     .amount-field__inner {
@@ -215,7 +280,7 @@
     .amount-field__symbol {
       font-size: 22px; font-weight: 500;
       color: var(--ink-3); font-variant-numeric: tabular-nums;
-      flex-shrink: 0;
+      flex-shrink: 0; line-height: 1;
     }
     .amount-field__number {
       font-size: 34px; font-weight: 500;
@@ -224,6 +289,7 @@
       color: var(--ink); flex: 1; line-height: 1.1;
     }
     .amount-field__number.empty { color: var(--ink-3); }
+    /* Input real — invisible, solo recibe el teclado */
     .amount-field input {
       position: absolute; opacity: 0;
       width: 1px; height: 1px; pointer-events: none;
@@ -231,11 +297,12 @@
     .currency-toggle {
       display: inline-flex;
       background: var(--paper-2);
-      border-radius: 999px; padding: 3px;
+      border-radius: var(--r-full); padding: 3px;
+      flex-shrink: 0;
     }
     .currency-toggle button {
       border: none; cursor: pointer;
-      padding: 5px 12px; border-radius: 999px;
+      padding: 5px 12px; border-radius: var(--r-full);
       font-size: 11px; font-weight: 600;
       font-family: var(--font-sans);
       letter-spacing: 0.02em;
@@ -254,28 +321,30 @@
       position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 40;
       background: var(--paper);
       border: 1px solid var(--hairline-2);
-      border-radius: 12px;
+      border-radius: var(--r-3);
       box-shadow: 0 8px 24px -8px rgba(11,18,32,0.18);
       overflow: hidden; max-height: 260px; overflow-y: auto;
     }
     .dropdown__option {
       width: 100%; text-align: left; cursor: pointer;
       border: none; border-bottom: 1px solid var(--hairline);
+      background: var(--paper);
       padding: 10px 14px;
       display: flex; align-items: center; gap: 8px;
       font-family: var(--font-sans); font-size: 15px;
+      color: var(--ink);
       transition: background var(--dur-fast) var(--ease);
     }
     .dropdown__option:last-child { border-bottom: 0; }
     .dropdown__option:hover { background: var(--paper-2); }
     .dropdown__option.selected { background: var(--paper-2); font-weight: 500; }
     .dropdown__check { color: var(--primary); font-size: 14px; margin-left: auto; }
-    .dropdown__dot { width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0; }
+    .dropdown__dot { width: 8px; height: 8px; border-radius: var(--r-full); flex-shrink: 0; }
 
     /* ---- Sub-toggle (Transferencia / Compra / Venta) ---- */
     .sub-toggle { display: flex; gap: 6px; }
     .sub-toggle button {
-      flex: 1; padding: 8px 10px; border-radius: 999px;
+      flex: 1; padding: 8px 10px; border-radius: var(--r-full);
       font-family: var(--font-sans);
       font-size: 12px; font-weight: 600;
       cursor: pointer;
@@ -296,7 +365,9 @@
       text-align: left; padding: 4px 2px;
       font-family: var(--font-sans); font-size: 13px;
       color: var(--ink-2);
+      transition: color var(--dur-fast) var(--ease);
     }
+    .expand-link:hover { color: var(--ink); }
 
     /* ---- Section label ---- */
     .section-label {
@@ -307,45 +378,49 @@
 
     /* ---- Movement row ---- */
     .movement-row {
-      display: flex; align-items: center; gap: 12;
+      display: flex; align-items: center; gap: 12px;
       padding: 12px 0;
       border-bottom: 1px solid var(--hairline);
     }
     .movement-row:last-child { border-bottom: 0; }
     .movement-row__icon {
-      width: 32px; height: 32px; border-radius: 8px;
+      width: 32px; height: 32px; border-radius: var(--r-1);
       background: var(--paper-2);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .movement-row__dot { width: 6px; height: 6px; border-radius: 999px; }
+    .movement-row__dot { width: 6px; height: 6px; border-radius: var(--r-full); }
     .movement-row__title {
       font-size: 14px; font-weight: 500; color: var(--ink);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .movement-row__sub { font-size: 12px; color: var(--ink-3); }
-    .movement-row__amount { font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+    .movement-row__sub { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
+    .movement-row__amount {
+      font-size: 14px; font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
     .movement-row__dup {
       font-size: 11px; color: var(--ink-3);
       cursor: pointer; background: none; border: none;
       padding: 0; font-family: var(--font-sans);
       transition: color var(--dur-fast) var(--ease);
+      display: block; margin-top: 2px;
     }
     .movement-row__dup:hover { color: var(--primary); }
 
-    /* ---- Bottom bar + guardar ---- */
+    /* ---- Bottom bar ---- */
     .bottom-bar {
-      padding: 12px 20px 28px;
+      padding: 12px var(--gutter) 28px;
       background: var(--paper);
       border-top: 1px solid var(--hairline);
       flex-shrink: 0;
       padding-bottom: calc(28px + env(safe-area-inset-bottom));
     }
     .btn-guardar {
-      width: 100%; height: 54px; border: none; border-radius: 12px;
+      width: 100%; height: 54px; border: none; border-radius: var(--r-3);
       font-family: var(--font-sans); font-size: 16px; font-weight: 600;
       letter-spacing: -0.005em; cursor: pointer;
-      transition: transform 160ms var(--ease), background var(--dur-fast) var(--ease);
+      transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
     }
     .btn-guardar:not(:disabled) { background: var(--primary); color: var(--ink-on-color); }
     .btn-guardar:not(:disabled):active { transform: scale(0.98); }
@@ -354,15 +429,19 @@
     /* ---- Toast ---- */
     .toast {
       position: absolute; left: 20px; right: 20px; bottom: 96px; z-index: 30;
-      display: flex; align-items: center; gap: 12;
+      display: flex; align-items: center; gap: 12px;
       background: var(--ink); color: var(--ink-on-color);
-      padding: 14px 16px; border-radius: 12px;
-      box-shadow: 0 14px 32px -12px rgba(11,18,32,0.4);
+      padding: 14px 16px; border-radius: var(--r-3);
+      box-shadow: var(--shadow-2);
       animation: toastIn var(--dur-base) var(--ease) both;
     }
-    .toast__dot { width: 8px; height: 8px; border-radius: 999px; background: #5DBE92; flex-shrink: 0; }
+    .toast__dot { width: 8px; height: 8px; border-radius: var(--r-full); background: #5DBE92; flex-shrink: 0; }
     .toast__msg { flex: 1; font-size: 14px; font-weight: 500; }
-    .toast__undo { font-size: 13px; color: #A8B0C0; cursor: pointer; background: none; border: none; font-family: var(--font-sans); padding: 0; }
+    .toast__undo {
+      font-size: 13px; color: #A8B0C0; cursor: pointer;
+      background: none; border: none; font-family: var(--font-sans); padding: 0;
+      transition: color var(--dur-fast) var(--ease);
+    }
     .toast__undo:hover { color: #FFFFFF; }
     @keyframes toastIn {
       from { opacity: 0; transform: translateY(8px); }
@@ -386,17 +465,25 @@
 
     /* ---- Error banner ---- */
     .error-banner {
-      margin: 0 20px 10px;
+      margin: 0 var(--gutter) 10px;
       padding: 10px 14px;
-      background: #DC2A2A0F; border: 1px solid #DC2A2A33;
-      border-radius: 10px; font-size: 13px; color: var(--alert);
+      background: var(--alert-soft);
+      border: 1px solid rgba(220,42,42,0.2);
+      border-radius: var(--r-2); font-size: 13px; color: var(--alert);
     }
+
+    /* ---- Dropdown value placeholder ---- */
+    .field-value {
+      font-size: 16px; font-weight: 500;
+      color: var(--ink); padding-top: 4px;
+    }
+    .field-value.empty { color: var(--ink-3); font-weight: 400; }
   </style>
 </head>
 <body>
 
-<!-- Cargar config antes de Alpine -->
-<script src="config.local.js" onerror="console.warn('config.local.js no encontrado. Copiá config.local.example.js y completá la URL.')"></script>
+<!-- Config + helpers cargados antes de Alpine -->
+<script src="config.local.js" onerror="console.warn('config.local.js no encontrado. Copiá config.local.example.js')"></script>
 <script src="../shared/formatters.js"></script>
 <script src="../shared/api-client.js"></script>
 
@@ -433,7 +520,7 @@
     </template>
   </div>
 
-  <!-- PENDING BANNERS (recurrentes variables sin monto) -->
+  <!-- PENDING BANNERS — recurrentes variables sin monto -->
   <template x-for="rec in recurrentesPendientes" :key="rec.id">
     <div class="pending-banner" @click="precargarRecurrente(rec)">
       <div class="pending-banner__dot"></div>
@@ -445,7 +532,7 @@
   </template>
 
   <!-- ERROR BANNER -->
-  <div class="error-banner" x-show="errorMsg" x-text="errorMsg"></div>
+  <div class="error-banner" x-show="errorMsg" x-cloak x-text="errorMsg"></div>
 
   <!-- SCROLLABLE FORM BODY -->
   <div class="form-body">
@@ -457,7 +544,8 @@
         <!-- Título -->
         <label class="field" :class="campoFocused==='titulo' ? 'focused' : ''">
           <div class="field__label">Título</div>
-          <input type="text" x-model="form.titulo" placeholder="Café Felix, super, nafta…"
+          <input type="text" x-model="form.titulo"
+            placeholder="Café Felix, super, nafta…"
             @focus="campoFocused='titulo'" @blur="campoFocused=''"
             inputmode="text" autocomplete="off">
         </label>
@@ -467,7 +555,11 @@
           @click="$refs.montoInput.focus()">
           <div class="amount-field__inner">
             <span class="amount-field__symbol" x-text="form.moneda === 'ARS' ? '$' : 'U$S'"></span>
-            <div class="amount-field__number" :class="!form.monto ? 'empty'" x-text="form.monto || '0'"></div>
+            <div class="amount-field__number" :class="!form.monto ? 'empty'"
+              x-text="form.monto
+                ? (form.moneda==='ARS' ? fmt.ars(form.monto) : fmt.usd(form.monto, 2))
+                : '0'">
+            </div>
             <input type="number" x-ref="montoInput" x-model="form.monto"
               inputmode="decimal" step="0.01"
               @focus="campoFocused='monto'" @blur="campoFocused=''">
@@ -487,7 +579,7 @@
               <span class="field__label-chevron"
                 :style="dropdownAbierto==='categoria' ? 'transform:rotate(180deg)' : ''">▾</span>
             </div>
-            <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+            <div class="field-value" :class="!form.categoria ? 'empty'"
               x-text="form.categoria || 'Seleccioná una categoría'"></div>
           </div>
           <div class="dropdown__menu" x-show="dropdownAbierto==='categoria'" @click.outside="dropdownAbierto=''">
@@ -510,7 +602,7 @@
               <span class="field__label-chevron"
                 :style="dropdownAbierto==='medio' ? 'transform:rotate(180deg)' : ''">▾</span>
             </div>
-            <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+            <div class="field-value" :class="!form.medio_pago ? 'empty'"
               x-text="form.medio_pago || 'Seleccioná un medio'"></div>
           </div>
           <div class="dropdown__menu" x-show="dropdownAbierto==='medio'" @click.outside="dropdownAbierto=''">
@@ -529,7 +621,7 @@
           </div>
         </div>
 
-        <!-- Más campos -->
+        <!-- Más campos (expandible) -->
         <template x-if="!mostrarMasCampos">
           <button class="expand-link" @click="mostrarMasCampos=true">
             + Más campos (quién, cuotas, reintegro…)
@@ -548,7 +640,7 @@
                   <span class="field__label-chevron"
                     :style="dropdownAbierto==='quien' ? 'transform:rotate(180deg)' : ''">▾</span>
                 </div>
-                <div style="font-size:16px;font-weight:500;padding-top:4px;display:flex;align-items:center;gap:8px">
+                <div class="field-value" style="display:flex;align-items:center;gap:8px">
                   <span class="dropdown__dot"
                     :style="`background:${personaColor(form.quien_gasto)}`"></span>
                   <span x-text="form.quien_gasto"></span>
@@ -575,7 +667,7 @@
                   <span class="field__label-chevron"
                     :style="dropdownAbierto==='cuotas' ? 'transform:rotate(180deg)' : ''">▾</span>
                 </div>
-                <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+                <div class="field-value"
                   x-text="form.cuotas_total === 1 ? '1 cuota (contado)' : form.cuotas_total + ' cuotas'"></div>
               </div>
               <div class="dropdown__menu" x-show="dropdownAbierto==='cuotas'" @click.outside="dropdownAbierto=''">
@@ -589,7 +681,7 @@
               </div>
             </div>
 
-            <!-- Es reintegro de... -->
+            <!-- Reintegro de… -->
             <div class="dropdown">
               <div class="field" :class="dropdownAbierto==='reintegro' ? 'focused' : ''"
                 @click="toggleDropdown('reintegro')">
@@ -598,8 +690,7 @@
                   <span class="field__label-chevron"
                     :style="dropdownAbierto==='reintegro' ? 'transform:rotate(180deg)' : ''">▾</span>
                 </div>
-                <div style="font-size:16px;padding-top:4px"
-                  :style="form.reintegro_de_movimiento_id ? 'font-weight:500;color:var(--ink)' : 'color:var(--ink-3)'"
+                <div class="field-value" :class="!form.reintegro_de_movimiento_id ? 'empty'"
                   x-text="form.reintegro_de_movimiento_id
                     ? (ultimosMovimientos.find(m=>m.id===form.reintegro_de_movimiento_id)?.titulo || 'Movimiento seleccionado')
                     : 'Ninguno'"></div>
@@ -612,7 +703,8 @@
                 <template x-for="mv in ultimosMovimientos.filter(m=>m.tipo==='gasto').slice(0,10)" :key="mv.id">
                   <button class="dropdown__option" :class="form.reintegro_de_movimiento_id===mv.id ? 'selected' : ''"
                     @click="form.reintegro_de_movimiento_id=mv.id; dropdownAbierto=''">
-                    <span style="flex:1" x-text="mv.titulo + ' — ' + (mv.moneda==='ARS'?'$':'U$S') + mv.monto"></span>
+                    <span style="flex:1"
+                      x-text="mv.titulo + ' — ' + (mv.moneda==='ARS'?'$ ':'U$S ') + formatMonto(mv.monto, mv.moneda)"></span>
                     <span class="dropdown__check" x-show="form.reintegro_de_movimiento_id===mv.id">✓</span>
                   </button>
                 </template>
@@ -638,7 +730,8 @@
 
         <label class="field" :class="campoFocused==='titulo' ? 'focused' : ''">
           <div class="field__label">Título</div>
-          <input type="text" x-model="form.titulo" placeholder="Sueldo mayo, freelance proyecto X…"
+          <input type="text" x-model="form.titulo"
+            placeholder="Sueldo mayo, freelance proyecto X…"
             @focus="campoFocused='titulo'" @blur="campoFocused=''">
         </label>
 
@@ -646,7 +739,11 @@
           @click="$refs.montoInput.focus()">
           <div class="amount-field__inner">
             <span class="amount-field__symbol" x-text="form.moneda==='ARS' ? '$' : 'U$S'"></span>
-            <div class="amount-field__number" :class="!form.monto ? 'empty'" x-text="form.monto || '0'"></div>
+            <div class="amount-field__number" :class="!form.monto ? 'empty'"
+              x-text="form.monto
+                ? (form.moneda==='ARS' ? fmt.ars(form.monto) : fmt.usd(form.monto, 2))
+                : '0'">
+            </div>
             <input type="number" x-ref="montoInput" x-model="form.monto"
               inputmode="decimal" step="0.01"
               @focus="campoFocused='monto'" @blur="campoFocused=''">
@@ -665,7 +762,7 @@
               <span class="field__label-chevron"
                 :style="dropdownAbierto==='categoria' ? 'transform:rotate(180deg)' : ''">▾</span>
             </div>
-            <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+            <div class="field-value" :class="!form.categoria ? 'empty'"
               x-text="form.categoria || 'Seleccioná una categoría'"></div>
           </div>
           <div class="dropdown__menu" x-show="dropdownAbierto==='categoria'" @click.outside="dropdownAbierto=''">
@@ -687,7 +784,7 @@
               <span class="field__label-chevron"
                 :style="dropdownAbierto==='cuenta' ? 'transform:rotate(180deg)' : ''">▾</span>
             </div>
-            <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+            <div class="field-value" :class="!form.cuenta_destino ? 'empty'"
               x-text="form.cuenta_destino || 'Seleccioná una cuenta'"></div>
           </div>
           <div class="dropdown__menu" x-show="dropdownAbierto==='cuenta'" @click.outside="dropdownAbierto=''">
@@ -703,7 +800,7 @@
       </div>
     </template>
 
-    <!-- ============ MOVIMIENTO INTERNO ============ -->
+    <!-- ============ MOV. INTERNO ============ -->
     <template x-if="modo === 'interno'">
       <div style="display:flex;flex-direction:column;gap:10px">
 
@@ -727,7 +824,11 @@
           @click="$refs.montoInput.focus()">
           <div class="amount-field__inner">
             <span class="amount-field__symbol" x-text="form.moneda==='ARS' ? '$' : 'U$S'"></span>
-            <div class="amount-field__number" :class="!form.monto ? 'empty'" x-text="form.monto || '0'"></div>
+            <div class="amount-field__number" :class="!form.monto ? 'empty'"
+              x-text="form.monto
+                ? (form.moneda==='ARS' ? fmt.ars(form.monto) : fmt.usd(form.monto, 2))
+                : '0'">
+            </div>
             <input type="number" x-ref="montoInput" x-model="form.monto"
               inputmode="decimal" step="0.01"
               @focus="campoFocused='monto'" @blur="campoFocused=''">
@@ -749,7 +850,7 @@
                   <span class="field__label-chevron"
                     :style="dropdownAbierto==='origen' ? 'transform:rotate(180deg)' : ''">▾</span>
                 </div>
-                <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+                <div class="field-value" :class="!form.cuenta_origen ? 'empty'"
                   x-text="form.cuenta_origen || 'Seleccioná'"></div>
               </div>
               <div class="dropdown__menu" x-show="dropdownAbierto==='origen'" @click.outside="dropdownAbierto=''">
@@ -770,7 +871,7 @@
                   <span class="field__label-chevron"
                     :style="dropdownAbierto==='destino' ? 'transform:rotate(180deg)' : ''">▾</span>
                 </div>
-                <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+                <div class="field-value" :class="!form.cuenta_destino ? 'empty'"
                   x-text="form.cuenta_destino || 'Seleccioná'"></div>
               </div>
               <div class="dropdown__menu" x-show="dropdownAbierto==='destino'" @click.outside="dropdownAbierto=''">
@@ -798,8 +899,8 @@
             </label>
             <label class="field" :class="campoFocused==='cantidad' ? 'focused' : ''">
               <div class="field__label">Cantidad</div>
-              <input type="number" x-model="form.cantidad" inputmode="decimal" step="0.0001"
-                placeholder="0"
+              <input type="number" x-model="form.cantidad"
+                inputmode="decimal" step="0.0001" placeholder="0"
                 @focus="campoFocused='cantidad'" @blur="campoFocused=''">
             </label>
             <div class="dropdown">
@@ -810,7 +911,7 @@
                   <span class="field__label-chevron"
                     :style="dropdownAbierto==='plataforma' ? 'transform:rotate(180deg)' : ''">▾</span>
                 </div>
-                <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+                <div class="field-value" :class="!form.plataforma ? 'empty'"
                   x-text="form.plataforma || 'Seleccioná'"></div>
               </div>
               <div class="dropdown__menu" x-show="dropdownAbierto==='plataforma'" @click.outside="dropdownAbierto=''">
@@ -831,7 +932,7 @@
                   <span class="field__label-chevron"
                     :style="dropdownAbierto==='cuentaPaga' ? 'transform:rotate(180deg)' : ''">▾</span>
                 </div>
-                <div style="font-size:16px;font-weight:500;color:var(--ink);padding-top:4px"
+                <div class="field-value" :class="!form.cuenta_origen ? 'empty'"
                   x-text="form.cuenta_origen || 'Seleccioná'"></div>
               </div>
               <div class="dropdown__menu" x-show="dropdownAbierto==='cuentaPaga'" @click.outside="dropdownAbierto=''">
@@ -855,7 +956,8 @@
       <template x-for="mv in ultimosMovimientos.slice(0,5)" :key="mv.id">
         <div class="movement-row">
           <div class="movement-row__icon">
-            <div class="movement-row__dot" :style="`background:${personaColor(mv.quien_gasto || mv.cargado_por)}`"></div>
+            <div class="movement-row__dot"
+              :style="`background:${personaColor(mv.quien_gasto || mv.cargado_por)}`"></div>
           </div>
           <div style="flex:1;min-width:0">
             <div class="movement-row__title" x-text="mv.titulo || mv.categoria"></div>
@@ -865,12 +967,11 @@
           <div style="text-align:right">
             <div class="movement-row__amount"
               :style="`color:${mv.moneda==='USD' ? 'var(--dolar)' : 'var(--peso)'}`"
-              x-text="(mv.moneda==='ARS'?'$ ':'U$S ') + formatMonto(mv.monto, mv.moneda)"></div>
+              x-text="(mv.moneda==='ARS' ? '$ ' : 'U$S ') + formatMonto(mv.monto, mv.moneda)"></div>
             <button class="movement-row__dup" @click="duplicar(mv)">Duplicar →</button>
           </div>
         </div>
       </template>
-      <!-- Estado vacío -->
       <div x-show="ultimosMovimientos.length === 0"
         style="text-align:center;color:var(--ink-3);font-size:14px;padding:20px 0">
         Aún no hay movimientos cargados
@@ -896,20 +997,15 @@
   </div>
 
   <!-- LOADING OVERLAY -->
-  <div class="loading-overlay" x-show="loading && !toast.visible">
+  <div class="loading-overlay" x-show="loading && !toast.visible" x-cloak>
     <div class="spinner"></div>
   </div>
 
 </div><!-- /app -->
 
-<!-- Alpine.js -->
 <script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
-
-<!-- App logic -->
 <script src="app.js"></script>
-
 <script>
-  // Registrar Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }

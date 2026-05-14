@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0B1220">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Cierre">
+  <title>Finanzas J&amp;P — Cierre mensual</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/app-icon-cierre.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       DESIGN TOKENS — Finanzas J&P (design system completo)
+    ===================================================== */
+    :root {
+      --paper:        #FFFFFF;
+      --paper-2:      #F6F7F9;
+      --paper-3:      #EBEDF1;
+      --ink:          #0B1220;
+      --ink-2:        #4B5563;
+      --ink-3:        #8A93A2;
+      --ink-on-color: #FFFFFF;
+      --hairline:     rgba(11,18,32,0.08);
+      --hairline-2:   rgba(11,18,32,0.14);
+      --primary:      #2C5BEC;
+      --primary-2:    #4970F0;
+      --primary-soft: #2C5BEC0F;
+      --peso:         #16A36A;
+      --peso-soft:    #16A36A14;
+      --dolar:        #2C5BEC;
+      --dolar-soft:   #2C5BEC14;
+      --pedro:        #2C5BEC;
+      --juani:        #E26A77;
+      --conjunto:     #6B5BD2;
+      --conjunto-soft:#6B5BD214;
+      --positive:     #16A36A;
+      --positive-soft:#16A36A14;
+      --alert:        #DC2A2A;
+      --alert-soft:   #DC2A2A14;
+      --warning:      #E6A100;
+      --font-sans:    'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font-serif:   'Source Serif 4', ui-serif, Georgia, serif;
+      --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px;
+      --s-6: 24px; --s-7: 32px; --s-8: 48px; --s-9: 64px;
+      --r-1: 6px; --r-2: 10px; --r-3: 14px; --r-4: 22px; --r-full: 999px;
+      --shadow-1: 0 1px 0 rgba(21,24,29,0.03), 0 6px 16px -8px rgba(21,24,29,0.08);
+      --shadow-2: 0 2px 0 rgba(21,24,29,0.03), 0 14px 32px -12px rgba(21,24,29,0.16);
+      --ease:      cubic-bezier(0.2,0,0,1);
+      --dur-fast:  180ms;
+      --dur-base:  240ms;
+      --dur-slow:  320ms;
+    }
+
+    [x-cloak] { display: none !important; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0; height: 100%; overflow: hidden;
+      font-family: var(--font-sans);
+      color: var(--ink); background: var(--paper);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'cv11', 'ss01';
+      padding-top: env(safe-area-inset-top);
+    }
+
+    input, button, select, textarea {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'cv11', 'ss01';
+    }
+
+    #app {
+      height: 100vh; height: 100dvh;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    /* ---- Header con progress bar ---- */
+    .cierre-header {
+      padding: 14px 20px 18px;
+      border-bottom: 1px solid var(--hairline);
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 5; flex-shrink: 0;
+    }
+    .cierre-header__top {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand {
+      font-family: var(--font-serif); font-size: 18px; color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .brand em { color: var(--primary); font-style: italic; }
+    .step-label {
+      font-size: 12px; color: var(--ink-3); font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .progress-track { display: flex; gap: 4px; margin-top: 12px; }
+    .progress-seg {
+      flex: 1; height: 3px; border-radius: 2px;
+      transition: background var(--dur-base) var(--ease);
+    }
+
+    /* ---- Scrollable body ---- */
+    .cierre-body {
+      flex: 1; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* ---- Step title ---- */
+    .step-title { padding: 20px 20px 6px; }
+    .step-kicker {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px;
+    }
+    .step-h1 {
+      margin: 0; font-size: 26px; font-weight: 600;
+      letter-spacing: -0.01em; color: var(--ink); line-height: 1.2;
+    }
+    .step-sub {
+      padding: 2px 20px 8px; font-size: 13px; color: var(--ink-2);
+    }
+
+    /* ---- Valuación row ---- */
+    .valuacion-row {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .valuacion-row__top { display: flex; align-items: center; gap: 10px; }
+    .valuacion-ticker { font-size: 15px; font-weight: 600; color: var(--ink); }
+    .valuacion-meta { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
+    .valuacion-input-wrap { width: 130px; flex-shrink: 0; }
+    .valuacion-input-label {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--ink-2); margin-bottom: 3px;
+    }
+    .valuacion-input-box {
+      background: var(--paper-2); border-radius: var(--r-2);
+      padding: 8px 10px; display: flex; align-items: baseline; gap: 4px;
+      border: 1px solid transparent;
+      transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+    }
+    .valuacion-input-box:focus-within {
+      border-color: var(--ink); background: var(--paper);
+    }
+    .valuacion-sym { font-size: 12px; color: var(--ink-3); flex-shrink: 0; }
+    .valuacion-input-box input {
+      border: none; background: transparent; flex: 1; width: 100%;
+      font-size: 14px; font-weight: 500; color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      outline: none; font-family: var(--font-sans); min-width: 0;
+    }
+    .valuacion-input-box input::placeholder { color: var(--ink-3); }
+    .valuacion-total {
+      margin-top: 6px; font-size: 12px; color: var(--ink-2); text-align: right;
+    }
+    .valuacion-total span { color: var(--ink); font-weight: 500; }
+
+    /* ---- Pago row ---- */
+    .pago-row {
+      padding: 12px 20px; border-bottom: 1px solid var(--hairline);
+      display: flex; align-items: center; gap: 12px; cursor: pointer;
+      transition: background var(--dur-fast) var(--ease);
+    }
+    .pago-row:active { background: var(--paper-2); }
+    .checkbox {
+      width: 22px; height: 22px; border-radius: var(--r-1); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+    }
+    .checkbox.checked  { background: var(--ink); border: 1.5px solid var(--ink); }
+    .checkbox.unchecked { background: transparent; border: 1.5px solid var(--hairline-2); }
+    .pago-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+    .pago-sub { font-size: 12px; color: var(--ink-3); }
+    .pago-monto {
+      font-size: 14px; font-weight: 500; color: var(--ink);
+      font-variant-numeric: tabular-nums; flex-shrink: 0;
+    }
+
+    /* ---- Objetivo field ---- */
+    .obj-wrap {
+      padding: 0 20px; display: flex; flex-direction: column; gap: 14px; margin-top: 12px;
+    }
+    .obj-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--ink-2); margin-bottom: 4px;
+    }
+    .obj-input-box {
+      background: var(--paper-2); border-radius: var(--r-2); padding: 12px 14px;
+      display: flex; align-items: baseline; gap: 6px;
+      border: 1px solid transparent;
+      transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+    }
+    .obj-input-box:focus-within { border-color: var(--ink); background: var(--paper); }
+    .obj-sym { font-size: 14px; color: var(--ink-3); flex-shrink: 0; }
+    .obj-input-box input {
+      border: none; background: transparent; flex: 1;
+      font-size: 18px; font-weight: 500; color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      outline: none; font-family: var(--font-sans); width: 100%; min-width: 0;
+    }
+    .obj-input-box input::placeholder { color: var(--ink-3); }
+    .obj-suffix { font-size: 14px; color: var(--ink-2); flex-shrink: 0; }
+    .obj-hint { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+
+    /* ---- Resumen rows ---- */
+    .resumen-block {
+      padding: 8px 20px 0; display: flex; flex-direction: column; gap: 0;
+    }
+    .resumen-row {
+      display: flex; justify-content: space-between; padding: 9px 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .resumen-row:last-child { border-bottom: 0; }
+    .resumen-k { font-size: 13px; color: var(--ink-2); }
+    .resumen-v { font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+    /* ---- Crecimiento highlight card ---- */
+    /* Ledger grid background — design spec: "evokes a ledger" */
+    .crecimiento-card {
+      margin: 18px 20px 0;
+      background: var(--paper-2);
+      border-radius: var(--r-3); padding: 24px 22px;
+      position: relative; overflow: hidden;
+    }
+    .crecimiento-card::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(var(--hairline) 1px, transparent 1px),
+        linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.5;
+    }
+    .crecimiento-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-2);
+      position: relative;
+    }
+    /* Big number: Source Serif 4 — the editorial serif moment per design system */
+    .crecimiento-pct {
+      font-family: var(--font-serif);
+      font-size: 56px; line-height: 1.05;
+      letter-spacing: -0.025em; margin-top: 6px;
+      position: relative;
+    }
+    .crecimiento-sub {
+      font-size: 13px; color: var(--ink-2); margin-top: 6px; position: relative;
+    }
+
+    /* ---- Footer ---- */
+    .cierre-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--hairline);
+      background: var(--paper);
+      display: flex; gap: 10px; flex-shrink: 0;
+      padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    }
+    .btn-secondary {
+      flex: 1; height: 52px; border-radius: var(--r-2);
+      border: 1px solid var(--hairline-2); background: transparent; color: var(--ink);
+      font-family: var(--font-sans); font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: background var(--dur-fast) var(--ease);
+    }
+    .btn-secondary:hover { background: var(--paper-2); }
+    .btn-primary {
+      flex: 2; height: 52px; border-radius: var(--r-2); border: none;
+      background: var(--ink); color: var(--ink-on-color);
+      font-family: var(--font-sans); font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: transform var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+    }
+    .btn-primary:not(:disabled):active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.4; cursor: default; }
+
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed; left: 20px; right: 20px; bottom: 90px; z-index: 50;
+      display: flex; align-items: center; gap: 12px;
+      background: var(--ink); color: var(--ink-on-color);
+      padding: 14px 16px; border-radius: var(--r-3);
+      box-shadow: var(--shadow-2);
+      animation: toastIn var(--dur-base) var(--ease) both;
+    }
+    .toast__dot {
+      width: 8px; height: 8px; border-radius: var(--r-full);
+      background: #5DBE92; flex-shrink: 0;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- Loading ---- */
+    .loading-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid var(--paper-3);
+      border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- Empty states ---- */
+    .empty-state {
+      padding: 40px 20px; text-align: center;
+      color: var(--ink-3); font-size: 14px; line-height: 1.6;
+    }
+    .empty-state small { font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<script src="config.local.js" onerror="console.warn('config.local.js no encontrado')"></script>
+<script src="../shared/formatters.js"></script>
+<script src="../shared/api-client.js"></script>
+
+<div id="app" x-data="cierreApp()" x-init="init()">
+
+  <!-- HEADER -->
+  <div class="cierre-header">
+    <div class="cierre-header__top">
+      <div class="brand">J<em>&amp;</em>P</div>
+      <div class="step-label">Paso <span x-text="paso"></span> de 4</div>
+    </div>
+    <div class="progress-track">
+      <template x-for="i in [1,2,3,4]" :key="i">
+        <div class="progress-seg"
+          :style="`background: ${i <= paso ? 'var(--ink)' : 'var(--paper-3)'}`"></div>
+      </template>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="cierre-body">
+
+    <!-- ======== PASO 1: VALUACIONES ======== -->
+    <template x-if="paso === 1">
+      <div>
+        <div class="step-title">
+          <div class="step-kicker">Cierre · <span x-text="fmt.mes(mes)"></span></div>
+          <h1 class="step-h1">Cargá las valuaciones del mes</h1>
+        </div>
+        <p class="step-sub">Ingresá el precio de cierre de cada activo. El valor total se calcula solo.</p>
+
+        <template x-if="activos.length === 0">
+          <div class="empty-state">
+            No hay activos en inversiones_compras todavía.<br>
+            <small>Cargalos desde el Form → Mov. interno → Compra activo</small>
+          </div>
+        </template>
+
+        <template x-for="activo in activos" :key="activo.key">
+          <div class="valuacion-row">
+            <div class="valuacion-row__top">
+              <div style="flex:1">
+                <div class="valuacion-ticker" x-text="activo.activo_ticker"></div>
+                <div class="valuacion-meta"
+                  x-text="activo.plataforma + ' · ' + activo.cantidad + ' unidades'"></div>
+              </div>
+              <div class="valuacion-input-wrap">
+                <div class="valuacion-input-label">Precio cierre</div>
+                <div class="valuacion-input-box">
+                  <span class="valuacion-sym" x-text="activo.moneda === 'USD' ? 'U$S' : '$'"></span>
+                  <input type="number" inputmode="decimal" step="0.01"
+                    x-model="activo.precio_cierre" placeholder="0">
+                </div>
+              </div>
+            </div>
+            <div class="valuacion-total">
+              Valor total:
+              <span x-text="(activo.moneda === 'USD' ? 'U$S ' : '$ ') + calcularTotal(activo)"></span>
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <!-- ======== PASO 2: PAGOS ======== -->
+    <template x-if="paso === 2">
+      <div>
+        <div class="step-title">
+          <div class="step-kicker">Cierre · <span x-text="fmt.mes(mes)"></span></div>
+          <h1 class="step-h1">Confirmá los pagos del mes</h1>
+        </div>
+        <p class="step-sub">Marcá las cuotas y recurrentes que ya pagamos.</p>
+
+        <template x-if="pagos.length === 0">
+          <div class="empty-state">Sin pagos pendientes para este mes. ✓</div>
+        </template>
+
+        <template x-for="pago in pagos" :key="pago.id">
+          <div class="pago-row" @click="togglePago(pago)">
+            <div class="checkbox" :class="pago.pagado ? 'checked' : 'unchecked'">
+              <template x-if="pago.pagado">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M2 6 L5 9 L10 3" stroke="white" stroke-width="2"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </template>
+            </div>
+            <div style="flex:1">
+              <div class="pago-title" x-text="pago.titulo"></div>
+              <div class="pago-sub" x-text="pago.sub"></div>
+            </div>
+            <div class="pago-monto" x-show="pago.monto"
+              x-text="(pago.moneda === 'USD' ? 'U$S ' : '$ ') + fmt.ars(pago.monto)"></div>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <!-- ======== PASO 3: OBJETIVOS ======== -->
+    <template x-if="paso === 3">
+      <div>
+        <div class="step-title">
+          <div class="step-kicker">Cierre · <span x-text="fmt.mes(mes)"></span></div>
+          <h1 class="step-h1" x-text="'Objetivos de ' + nombreMesSiguiente()"></h1>
+        </div>
+        <p class="step-sub">Lo que querés ahorrar y, opcionalmente, un tope de gasto.</p>
+
+        <div class="obj-wrap">
+          <!-- Ahorro ARS -->
+          <div>
+            <div class="obj-label">Ahorro objetivo ARS</div>
+            <div class="obj-input-box">
+              <span class="obj-sym">$</span>
+              <input type="number" inputmode="decimal"
+                x-model="objetivos.ahorro_ars" placeholder="0">
+            </div>
+            <div class="obj-hint" x-show="cotizacion && objetivos.ahorro_ars"
+              x-text="'≈ U$S ' + fmt.usd(objetivos.ahorro_ars / cotizacion, 0) + ' al MEP de hoy'"></div>
+          </div>
+
+          <!-- Ahorro USD -->
+          <div>
+            <div class="obj-label">Ahorro objetivo USD</div>
+            <div class="obj-input-box">
+              <span class="obj-sym">U$S</span>
+              <input type="number" inputmode="decimal"
+                x-model="objetivos.ahorro_usd" placeholder="0">
+            </div>
+          </div>
+
+          <!-- Tope de gasto -->
+          <div>
+            <div class="obj-label">Tope de gasto (opcional)</div>
+            <div class="obj-input-box">
+              <span class="obj-sym">$</span>
+              <input type="number" inputmode="decimal"
+                x-model="objetivos.tope_gasto" placeholder="Sin tope">
+            </div>
+          </div>
+
+          <!-- % de ingreso -->
+          <div>
+            <div class="obj-label">% de ingreso a ahorrar</div>
+            <div class="obj-input-box">
+              <input type="number" inputmode="decimal"
+                x-model="objetivos.pct_ingreso" placeholder="0" style="text-align:right">
+              <span class="obj-suffix">%</span>
+            </div>
+            <div class="obj-hint" x-show="resumen && resumen.ingresos">
+              Tomando como referencia los ingresos de <span x-text="fmt.mes(mes)"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- ======== PASO 4: RESUMEN ======== -->
+    <template x-if="paso === 4">
+      <div>
+        <div class="step-title">
+          <div class="step-kicker">Cerraste el mes</div>
+          <h1 class="step-h1" x-text="fmt.mes(mes)"></h1>
+        </div>
+
+        <!-- Ingresos / Gastos / Ahorro -->
+        <div class="resumen-block" x-show="resumen">
+          <div class="resumen-row">
+            <span class="resumen-k">Ingresos</span>
+            <span class="resumen-v" style="color:var(--peso)"
+              x-text="'$ ' + fmt.ars(resumen?.ingresos?.ars)"></span>
+          </div>
+          <div class="resumen-row">
+            <span class="resumen-k">Gastos</span>
+            <span class="resumen-v" x-text="'$ ' + fmt.ars(resumen?.gastos?.ars)"></span>
+          </div>
+          <div class="resumen-row">
+            <span class="resumen-k"
+              x-text="'Ahorro' + (objetivos.ahorro_ars ? ' · obj $ ' + fmt.ars(objetivos.ahorro_ars) : '')"></span>
+            <span class="resumen-v"
+              :style="`color: ${ahorroOk() ? 'var(--positive)' : 'var(--alert)'}`"
+              x-text="'$ ' + fmt.ars(resumen?.ahorro?.ars_equiv || 0)"></span>
+          </div>
+        </div>
+
+        <!-- Patrimonio inicio / fin -->
+        <div class="resumen-block" style="margin-top:12px" x-show="resumen">
+          <div class="resumen-row">
+            <span class="resumen-k">Patrimonio · inicio del mes</span>
+            <span class="resumen-v"
+              x-text="resumen?.patrimonio_inicio_usd != null ? 'U$S ' + fmt.usd(resumen.patrimonio_inicio_usd, 0) : '—'"></span>
+          </div>
+          <div class="resumen-row">
+            <span class="resumen-k">Patrimonio · fin del mes</span>
+            <span class="resumen-v"
+              x-text="resumen?.patrimonio_fin_usd != null ? 'U$S ' + fmt.usd(resumen.patrimonio_fin_usd, 0) : '—'"></span>
+          </div>
+        </div>
+
+        <!-- Crecimiento highlight — el momento editorial con Source Serif 4 -->
+        <div class="crecimiento-card" x-show="resumen?.crecimiento_pct != null">
+          <div class="crecimiento-label">Crecimiento del patrimonio</div>
+          <div class="crecimiento-pct"
+            :style="`color: ${(resumen?.crecimiento_pct || 0) >= 0 ? 'var(--positive)' : 'var(--alert)'}`"
+            x-text="((resumen?.crecimiento_pct || 0) >= 0 ? '+' : '') + (resumen?.crecimiento_pct || 0).toFixed(1) + '%'">
+          </div>
+          <div class="crecimiento-sub"
+            x-text="'U$S ' + fmt.usd(Math.abs((resumen?.patrimonio_fin_usd || 0) - (resumen?.patrimonio_inicio_usd || 0)), 0) + ' ' + ((resumen?.crecimiento_pct || 0) >= 0 ? 'más' : 'menos') + ' que el mes pasado'">
+          </div>
+        </div>
+
+        <!-- Distribución del crecimiento -->
+        <div style="padding:18px 20px 0" x-show="resumen?.distribucion_crecimiento">
+          <div style="font-size:11px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-2); margin-bottom:8px">
+            De dónde vino el crecimiento
+          </div>
+          <div class="resumen-row">
+            <span class="resumen-k">Ahorro nuevo</span>
+            <span class="resumen-v"
+              x-text="'U$S ' + fmt.usd(resumen?.distribucion_crecimiento?.ahorro_nuevo_usd, 0)"></span>
+          </div>
+          <div class="resumen-row">
+            <span class="resumen-k">Rendimiento de inversiones</span>
+            <span class="resumen-v" style="color:var(--positive)"
+              x-text="'U$S ' + fmt.usd(Math.max(0, resumen?.distribucion_crecimiento?.rendimiento_inversiones_usd || 0), 0)"></span>
+          </div>
+        </div>
+
+        <!-- Call to action final -->
+        <div style="padding:24px 20px; font-size:13px; color:var(--ink-3); text-align:center"
+          x-show="paso === 4 && !confirmado">
+          Al confirmar se graban las valuaciones, pagos y objetivos.
+        </div>
+        <div style="padding:24px 20px; text-align:center" x-show="confirmado">
+          <div style="font-size:13px; font-weight:600; color:var(--positive); letter-spacing:-0.005em">
+            Cierre completado
+          </div>
+          <div style="font-size:13px; color:var(--ink-3); margin-top:4px">
+            Ya podés ver el dashboard del mes que viene.
+          </div>
+          <a href="../dashboard/"
+            style="display:inline-block; margin-top:20px; padding:12px 24px;
+              background:var(--ink); color:var(--ink-on-color); border-radius:var(--r-2);
+              font-weight:600; font-size:15px; text-decoration:none;
+              transition:opacity var(--dur-fast)">
+            Ir al dashboard →
+          </a>
+        </div>
+      </div>
+    </template>
+
+  </div><!-- /cierre-body -->
+
+  <!-- FOOTER -->
+  <div class="cierre-footer" x-show="!confirmado">
+    <button class="btn-secondary" x-show="paso > 1" @click="anterior()">Atrás</button>
+    <button class="btn-primary"
+      :disabled="loading"
+      @click="paso < 4 ? siguiente() : confirmarCierre()"
+      x-text="loading ? 'Guardando…' : (paso < 4 ? 'Siguiente paso' : 'Confirmar cierre')">
+    </button>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" x-show="toast" x-cloak>
+    <div class="toast__dot"></div>
+    <span x-text="toast" style="font-size:14px; font-weight:500"></span>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-overlay" x-show="loading && paso < 4" x-cloak>
+    <div class="spinner"></div>
+  </div>
+
+</div><!-- /app -->
+
+<script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+</script>
+</body>
+</html>
