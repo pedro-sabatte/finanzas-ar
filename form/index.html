@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>try{var _t=localStorage.getItem('jp_unlock_ts');if(!_t||(Date.now()-parseInt(_t))>=28800000)document.documentElement.style.visibility='hidden';}catch(e){}</script>
   <meta name="theme-color" content="#2C5BEC">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -165,6 +166,7 @@
       font-weight: 500; font-size: 26px;
       color: var(--ink); letter-spacing: -0.02em;
       line-height: 1; flex-shrink: 0;
+      text-decoration: none;
     }
     .brand-mark em { color: var(--primary); font-style: italic; }
 
@@ -173,7 +175,6 @@
       display: flex; gap: 4px;
       background: var(--paper-2);
       border-radius: var(--r-full); padding: 3px;
-      margin-left: auto;
     }
     .person-toggle button {
       border: none; cursor: pointer;
@@ -491,10 +492,9 @@
 
   <!-- HEADER -->
   <header class="app-header">
-    <div style="flex:1; min-width:0">
-      <div class="app-header__greet" x-text="saludo"></div>
-      <div class="app-header__name" x-text="persona"></div>
-    </div>
+    <!-- Brand mark → volver al inicio -->
+    <a href="../" class="brand-mark">J<em>&amp;</em>P</a>
+    <div style="flex:1"></div>
     <!-- Toggle Pedro / Juani -->
     <div class="person-toggle">
       <button
@@ -504,8 +504,6 @@
         :style="`background:${persona==='Juani' ? '#E26A77' : 'transparent'}; color:${persona==='Juani' ? '#fff' : '#4B5563'}`"
         @click="setPersona('Juani')">Juani</button>
     </div>
-    <!-- Brand mark -->
-    <div class="brand-mark" style="margin-left:12px">J<em>&amp;</em>P</div>
   </header>
 
   <!-- MODE TABS -->
@@ -1010,5 +1008,6 @@
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 </script>
+<script src="../shared/pin-lock.js"></script>
 </body>
 </html>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>try{var _t=localStorage.getItem('jp_unlock_ts');if(!_t||(Date.now()-parseInt(_t))>=28800000)document.documentElement.style.visibility='hidden';}catch(e){}</script>
   <meta name="theme-color" content="#0B1220">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -98,7 +99,7 @@
     }
     .brand {
       font-family: var(--font-serif); font-size: 18px; color: var(--ink);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.02em; text-decoration: none;
     }
     .brand em { color: var(--primary); font-style: italic; }
     .step-label {
@@ -333,7 +334,7 @@
   <!-- HEADER -->
   <div class="cierre-header">
     <div class="cierre-header__top">
-      <div class="brand">J<em>&amp;</em>P</div>
+      <a href="../" class="brand">J<em>&amp;</em>P</a>
       <div class="step-label">Paso <span x-text="paso"></span> de 4</div>
     </div>
     <div class="progress-track">
@@ -605,5 +606,6 @@
 <script>
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 </script>
+<script src="../shared/pin-lock.js"></script>
 </body>
 </html>
