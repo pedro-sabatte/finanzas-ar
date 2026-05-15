@@ -111,7 +111,7 @@
     .carousel-track {
       display: flex;
       gap: 14px;
-      padding: 4px 20px 8px;
+      padding: 4px 0 8px;
       will-change: transform;
     }
     .carousel-track.snap {
@@ -405,7 +405,7 @@
 
       <div class="carousel-track"
         :class="{ 'snap': !isDragging }"
-        :style="`transform: translateX(${-(activeIdx * (272 + 14)) + (isDragging ? dragOffset : 0)}px)`">
+        :style="`transform: translateX(calc(50vw - 136px + ${-(activeIdx * (272 + 14)) + (isDragging ? dragOffset : 0)}px))`">
 
         <template x-for="(t, i) in tarjetas" :key="t.id">
           <!-- Card token -->
