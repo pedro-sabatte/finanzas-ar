@@ -47,6 +47,7 @@ function doPost(e) {
       case 'marcar_cuota_pagada':       return responder(marcarCuotaPagada(payload));
       case 'vincular_reintegro':        return responder(vincularReintegro(payload));
       case 'eliminar_movimiento':       return responder(eliminarMovimiento(payload));
+      case 'actualizar_saldo_tarjeta':  return responder(actualizarSaldoTarjeta(payload));
       case 'cierre_mensual':            return responder(cierreMensual(payload));
       default:
         return responder({ ok: false, message: 'Acción desconocida: ' + accion });
@@ -77,6 +78,7 @@ function doGet(e) {
       case 'alertas_anomalias':     return responder(getAlertasAnomalias(e.parameter.mes));
       case 'comparativa_anual':     return responder(getComparativaAnual(e.parameter.mes_actual));
       case 'cierre_pendiente':      return responder(getCierrePendiente());
+      case 'resumen_tarjetas':      return responder(getResumenTarjetas());
       default:
         return responder({ ok: false, message: 'Acción desconocida: ' + accion });
     }
