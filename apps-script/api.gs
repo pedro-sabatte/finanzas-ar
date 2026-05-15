@@ -243,6 +243,14 @@ function vincularReintegro(payload) {
   return { ok: true, message: 'Reintegro vinculado' };
 }
 
+function eliminarMovimiento(payload) {
+  if (!payload.id) throw new Error('id requerido');
+  const fila = encontrarFilaPorId('movimientos', payload.id);
+  if (fila < 0) return { ok: false, message: 'Movimiento no encontrado: ' + payload.id };
+  getHoja('movimientos').deleteRow(fila);
+  return { ok: true, message: 'Movimiento eliminado' };
+}
+
 // ---- LECTURA ----
 
 function getDashboardResumen(mes) {

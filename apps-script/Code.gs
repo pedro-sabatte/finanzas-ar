@@ -46,6 +46,7 @@ function doPost(e) {
       case 'actualizar_objetivo':       return responder(actualizarObjetivo(payload));
       case 'marcar_cuota_pagada':       return responder(marcarCuotaPagada(payload));
       case 'vincular_reintegro':        return responder(vincularReintegro(payload));
+      case 'eliminar_movimiento':       return responder(eliminarMovimiento(payload));
       case 'cierre_mensual':            return responder(cierreMensual(payload));
       default:
         return responder({ ok: false, message: 'Acción desconocida: ' + accion });
