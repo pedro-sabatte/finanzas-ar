@@ -113,6 +113,21 @@ function cargarDatosTarjetas() {
 //   - alertas activas: cierre_hoy, revisar_resumen (+1/+2 días post-cierre),
 //                      vencimiento_proximo (-2/-1 días), vencimiento_hoy, vencimiento_pasado
 //   - deuda_total_usd_equiv: saldo en USD + saldo ARS / cotización
+// Convierte un valor del Sheet (Date object o string) a 'yyyy-MM-dd', o null si está vacío
+function fechaAString_(val) {
+  if (!val || val === '') return null;
+  if (val instanceof Date) {
+    return Utilities.formatDate(val, 'America/Argentina/Buenos_Aires', 'yyyy-MM-dd');
+  }
+  const s = String(val).trim();
+  // Si ya viene como yyyy-MM-dd lo devuelve tal cual
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0, 10);
+  // Si viene como fecha larga de JS la parsea
+  const d = new Date(s);
+  if (!isNaN(d)) return Utilities.formatDate(d, 'America/Argentina/Buenos_Aires', 'yyyy-MM-dd');
+  return null;
+}
+
 function getResumenTarjetas() {
   const tarjetas    = hojaAObjetos('tarjetas').filter(t => t.activa == true || t.activa === 'TRUE');
   const movimientos = hojaAObjetos('movimientos');
@@ -121,7 +136,7 @@ function getResumenTarjetas() {
   const hoyStr      = Utilities.formatDate(ahora, 'America/Argentina/Buenos_Aires', 'yyyy-MM-dd');
 
   const resumen = tarjetas.map(t => {
-    const ultimoCierre = t.ultimo_cierre ? String(t.ultimo_cierre).trim() : null;
+    const ultimoCierre = fechaAString_(t.ultimo_cierre);
 
     // ── Consumos del ciclo actual (desde ultimo_cierre hasta hoy) ──
     const consumosCiclo = movimientos.filter(mv => {
@@ -143,12 +158,15 @@ function getResumenTarjetas() {
     let diasCierre      = null;
     let diasVencimiento = null;
 
-    if (t.proximo_cierre) {
-      const fc = new Date(String(t.proximo_cierre) + 'T12:00:00-03:00');
+    const proxCierreStr = fechaAString_(t.proximo_cierre);
+    const proxVencStr   = fechaAString_(t.proximo_vencimiento);
+
+    if (proxCierreStr) {
+      const fc = new Date(proxCierreStr + 'T12:00:00-03:00');
       diasCierre = Math.round((fc - ahora) / 86400000);
     }
-    if (t.proximo_vencimiento) {
-      const fv = new Date(String(t.proximo_vencimiento) + 'T12:00:00-03:00');
+    if (proxVencStr) {
+      const fv = new Date(proxVencStr + 'T12:00:00-03:00');
       diasVencimiento = Math.round((fv - ahora) / 86400000);
     }
 
@@ -184,8 +202,8 @@ function getResumenTarjetas() {
       consumos_ciclo_ars:    Math.round(consumosArs * 100) / 100,
       consumos_ciclo_usd:    Math.round(consumosUsd * 100) / 100,
       ultimo_cierre:         ultimoCierre,
-      proximo_cierre:        t.proximo_cierre   ? String(t.proximo_cierre).substring(0, 10)   : null,
-      proximo_vencimiento:   t.proximo_vencimiento ? String(t.proximo_vencimiento).substring(0, 10) : null,
+      proximo_cierre:        proxCierreStr,
+      proximo_vencimiento:   proxVencStr,
       dias_para_cierre:      diasCierre,
       dias_para_vencimiento: diasVencimiento,
       alertas,
