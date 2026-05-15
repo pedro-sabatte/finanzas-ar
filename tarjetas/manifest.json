@@ -1,0 +1,13 @@
+{
+  "name": "Finanzas J&P — Tarjetas",
+  "short_name": "Tarjetas",
+  "description": "Ciclos, saldos y alertas de tarjetas de crédito",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "icons": [
+    { "src": "icons/app-icon-tarjetas.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

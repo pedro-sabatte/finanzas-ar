@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <script>try{var _t=localStorage.getItem('jp_unlock_ts');if(!_t||(Date.now()-parseInt(_t))>=28800000)document.documentElement.style.visibility='hidden';}catch(e){}</script>
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Tarjetas">
+  <title>Finanzas J&amp;P — Tarjetas</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/app-icon-tarjetas.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Tokens ─────────────────────────────────────────────── */
+    :root {
+      --paper: #FFFFFF; --paper-2: #F6F7F9; --paper-3: #EBEDF1;
+      --ink: #0B1220; --ink-2: #4B5563; --ink-3: #8A93A2;
+      --ink-on-color: #FFFFFF;
+      --hairline: rgba(11,18,32,0.08); --hairline-2: rgba(11,18,32,0.14);
+      --primary: #2C5BEC; --primary-soft: #2C5BEC0F;
+      --peso: #16A36A; --peso-soft: #16A36A14;
+      --dolar: #2C5BEC; --dolar-soft: #2C5BEC14;
+      --positive: #16A36A; --positive-soft: #16A36A14;
+      --alert: #DC2A2A; --alert-soft: #DC2A2A14;
+      --warning: #E6A100; --warning-soft: #E6A10014;
+      --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font-serif: 'Source Serif 4', ui-serif, Georgia, serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-7:32px;
+      --r-1:6px; --r-2:10px; --r-3:14px; --r-4:22px; --r-full:999px;
+      --shadow-1: 0 1px 0 rgba(21,24,29,0.03), 0 6px 16px -8px rgba(21,24,29,0.08);
+      --shadow-2: 0 2px 0 rgba(21,24,29,0.03), 0 14px 32px -12px rgba(21,24,29,0.16);
+      --ease: cubic-bezier(0.2,0,0,1);
+      --dur-fast: 180ms; --dur-base: 240ms; --dur-slow: 320ms;
+    }
+
+    [x-cloak] { display: none !important; }
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0; height: 100%; overflow: hidden;
+      font-family: var(--font-sans);
+      color: var(--ink); background: var(--paper);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'cv11', 'ss01';
+      padding-top: env(safe-area-inset-top);
+    }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    .screen {
+      height: 100%; display: flex; flex-direction: column;
+    }
+    .scroll-body {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding-bottom: calc(32px + env(safe-area-inset-bottom));
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .t-header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,0.86);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--hairline);
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+    .t-header .brand {
+      font-family: var(--font-serif); font-size: 20px;
+      color: var(--ink); letter-spacing: -0.02em; text-decoration: none;
+    }
+    .t-header .brand em { color: var(--primary); font-style: italic; }
+    .t-header .header-date { font-size: 12px; color: var(--ink-2); font-weight: 500; }
+    .t-header .header-refresh {
+      background: none; border: none; cursor: pointer;
+      padding: 4px; color: var(--ink-3); font-size: 18px;
+      line-height: 1; transition: transform var(--dur-base) var(--ease);
+    }
+    .t-header .header-refresh.spinning { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Section title ──────────────────────────────────────── */
+    .section-title {
+      padding: 20px 20px 4px;
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .section-title h2 {
+      margin: 0; font-size: 22px; font-weight: 600;
+      letter-spacing: -0.01em; color: var(--ink);
+    }
+    .section-title .count { font-size: 12px; color: var(--ink-2); }
+    .active-label {
+      padding: 0 20px 0; font-size: 13px; color: var(--ink-2);
+      min-height: 20px;
+    }
+
+    /* ── Carousel ───────────────────────────────────────────── */
+    .carousel-viewport {
+      overflow: hidden;
+      padding: 14px 0 8px;
+      touch-action: pan-y;
+    }
+    .carousel-track {
+      display: flex;
+      gap: 14px;
+      padding: 4px 20px 8px;
+      will-change: transform;
+    }
+    .carousel-track.snap {
+      transition: transform var(--dur-slow) var(--ease);
+    }
+
+    /* ── Card token ─────────────────────────────────────────── */
+    .card-token {
+      width: 272px;
+      height: 172px;  /* ≈ 272/1.586 */
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        0 12px 28px -10px rgba(11,18,32,0.35),
+        0 2px 6px rgba(11,18,32,0.10);
+      transition: opacity var(--dur-base) var(--ease),
+                  transform var(--dur-base) var(--ease);
+      user-select: none;
+    }
+    .card-token.inactive { opacity: 0.52; }
+    .card-token.active   { opacity: 1; }
+
+    /* Accent strip top-left */
+    .card-accent-strip {
+      position: absolute; top: 0; left: 0;
+      width: 36px; height: 3px;
+      border-bottom-right-radius: 2px;
+    }
+    /* Network mark top-right */
+    .card-network {
+      position: absolute; top: 16px; right: 18px;
+    }
+    .card-network-visa {
+      font-family: var(--font-serif);
+      font-style: italic; font-weight: 500;
+      font-size: 21px; letter-spacing: -0.02em; line-height: 1;
+    }
+    .card-network-amex {
+      font-family: var(--font-sans);
+      font-weight: 700; font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 3px 5px; border-radius: 2px; line-height: 1;
+      border: 1px solid currentColor;
+    }
+    /* Bank label + name bottom-left */
+    .card-label {
+      position: absolute; left: 20px; bottom: 18px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .card-bank {
+      font-size: 9px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+    }
+    .card-name {
+      font-family: var(--font-serif);
+      font-size: 20px; font-weight: 400;
+      letter-spacing: -0.015em; line-height: 1.05;
+    }
+    /* Decorative pebble bottom-right */
+    .card-pebble {
+      position: absolute; right: 20px; bottom: 20px;
+      width: 20px; height: 20px; border-radius: 50%;
+    }
+    /* Shine overlay */
+    .card-shine {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 90% 15%, rgba(255,255,255,0.18) 0%, transparent 55%);
+    }
+
+    /* ── Dots indicator ─────────────────────────────────────── */
+    .dots {
+      display: flex; justify-content: center; gap: 6px;
+      padding: 2px 0 10px;
+    }
+    .dot {
+      height: 6px; border-radius: var(--r-full);
+      background: var(--hairline-2);
+      transition: all 220ms var(--ease);
+    }
+    .dot.active { background: var(--ink); }
+
+    /* ── Timeline ───────────────────────────────────────────── */
+    .timeline-card {
+      margin: 4px 20px 0;
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-3);
+      background: var(--paper);
+      padding: 18px 20px 22px;
+    }
+    .timeline-label {
+      font-size: 14px; font-weight: 500;
+      letter-spacing: -0.005em;
+      margin-bottom: 18px;
+    }
+    .timeline-dates {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      margin-bottom: 8px;
+    }
+    .timeline-date {
+      font-size: 16px; font-weight: 600;
+      letter-spacing: -0.005em; font-variant-numeric: tabular-nums;
+    }
+    .timeline-date.left  { text-align: left; }
+    .timeline-date.mid   { text-align: center; }
+    .timeline-date.right { text-align: right; }
+
+    .timeline-bar {
+      position: relative; height: 18px;
+    }
+    .timeline-track {
+      position: absolute; top: 8px; left: 6px; right: 6px;
+      height: 2px; background: var(--paper-3); border-radius: var(--r-full);
+    }
+    .timeline-fill {
+      position: absolute; top: 8px; left: 6px;
+      height: 2px; background: var(--ink); border-radius: var(--r-full);
+      transition: width var(--dur-slow) var(--ease);
+    }
+    .timeline-anchor {
+      position: absolute; top: 5px;
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .timeline-marker {
+      position: absolute; top: 0;
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 3px solid var(--paper);
+      box-shadow: 0 1px 4px rgba(11,18,32,0.25);
+      transition: left var(--dur-slow) var(--ease);
+    }
+    .timeline-labels {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      margin-top: 12px;
+    }
+    .timeline-lbl {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .timeline-lbl.left  { text-align: left; }
+    .timeline-lbl.mid   { text-align: center; }
+    .timeline-lbl.right { text-align: right; }
+
+    /* ── Amount cards ───────────────────────────────────────── */
+    .section-label {
+      padding: 16px 20px 6px;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .amount-card {
+      margin: 0 20px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-3);
+      background: var(--paper);
+      padding: 16px 20px;
+    }
+    .amount-card + .amount-card { margin-top: 10px; }
+    .amount-card__header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .amount-card__title {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-2);
+    }
+    .amount-card__ars {
+      font-size: 26px; font-weight: 500;
+      letter-spacing: -0.005em; line-height: 1.15;
+      color: var(--ink);
+    }
+    .amount-card__usd {
+      font-size: 14px; font-weight: 500;
+      color: var(--ink-2); margin-top: 2px;
+    }
+    .amount-card__footer {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--hairline);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: var(--ink-2);
+    }
+
+    /* Débito automático badge */
+    .debito-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px 3px 8px;
+      border-radius: var(--r-full);
+      font-size: 11px; font-weight: 500; letter-spacing: 0.02em;
+    }
+    .debito-badge.on {
+      background: var(--positive-soft); color: var(--positive);
+    }
+    .debito-badge.off {
+      background: var(--paper-2); color: var(--ink-3);
+    }
+    .debito-badge .dot-badge {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .debito-badge.on  .dot-badge { background: var(--positive); }
+    .debito-badge.off .dot-badge { background: var(--ink-3); }
+
+    /* ── Alert banner ───────────────────────────────────────── */
+    .alert-banner {
+      margin: 12px 20px 0;
+      padding: 12px 16px;
+      border-radius: var(--r-2);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 500;
+    }
+    .alert-banner.vencimiento_hoy   { background: var(--alert-soft);   color: var(--alert); }
+    .alert-banner.vencimiento_proximo { background: var(--warning-soft); color: var(--warning); }
+    .alert-banner.revisar_resumen   { background: var(--primary-soft);  color: var(--primary); }
+    .alert-banner.deuda_usd         { background: var(--dolar-soft);   color: var(--dolar); }
+
+    /* ── Skeleton ───────────────────────────────────────────── */
+    .skeleton {
+      background: var(--paper-2);
+      border-radius: var(--r-2);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.5; }
+    }
+
+    /* ── Empty state ────────────────────────────────────────── */
+    .empty {
+      text-align: center; padding: 60px 20px;
+      color: var(--ink-3); font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="../shared/api-client.js"></script>
+<script src="app.js"></script>
+<script src="../shared/formatters.js"></script>
+
+<div class="screen" x-data="tarjetasApp()" x-init="init()">
+
+  <!-- HEADER -->
+  <header class="t-header">
+    <a href="../" class="brand">J<em>&amp;</em>P</a>
+    <div style="flex:1"></div>
+    <div class="header-date" x-text="fechaHoy()"></div>
+    <button class="header-refresh" :class="loading ? 'spinning' : ''" @click="cargar()">↻</button>
+  </header>
+
+  <!-- LOADING SKELETON -->
+  <div x-show="loading" x-cloak class="scroll-body" style="padding: 20px">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px">
+      <div class="skeleton" style="width:100px; height:26px; border-radius:6px"></div>
+      <div class="skeleton" style="width:56px; height:16px; border-radius:6px"></div>
+    </div>
+    <div class="skeleton" style="width:140px; height:16px; border-radius:6px; margin-bottom:20px"></div>
+    <!-- card skeleton -->
+    <div class="skeleton" style="width:272px; height:172px; border-radius:16px; margin-bottom:12px"></div>
+    <!-- dots -->
+    <div style="display:flex; gap:6px; justify-content:center; margin-bottom:16px">
+      <div class="skeleton" style="width:18px; height:6px; border-radius:999px"></div>
+      <div class="skeleton" style="width:6px;  height:6px; border-radius:999px"></div>
+      <div class="skeleton" style="width:6px;  height:6px; border-radius:999px"></div>
+    </div>
+    <!-- timeline skeleton -->
+    <div class="skeleton" style="height:110px; border-radius:14px; margin-bottom:12px"></div>
+    <div class="skeleton" style="height:90px;  border-radius:14px; margin-bottom:10px"></div>
+    <div class="skeleton" style="height:90px;  border-radius:14px"></div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="scroll-body" x-show="!loading">
+
+    <!-- Section title -->
+    <div class="section-title">
+      <h2>Tarjetas</h2>
+      <span class="count" x-text="tarjetas.length + ' activas'"></span>
+    </div>
+    <div class="active-label" x-text="activeTarjeta ? activeTarjeta.nombre : ''"></div>
+
+    <!-- ── CAROUSEL ──────────────────────────────────────── -->
+    <div class="carousel-viewport"
+      @touchstart="carouselStart($event)"
+      @touchmove="carouselMove($event)"
+      @touchend="carouselEnd($event)">
+
+      <div class="carousel-track"
+        :class="{ 'snap': !isDragging }"
+        :style="`transform: translateX(${-(activeIdx * (272 + 14)) + (isDragging ? dragOffset : 0)}px)`">
+
+        <template x-for="(t, i) in tarjetas" :key="t.id">
+          <!-- Card token -->
+          <div class="card-token"
+            :class="i === activeIdx ? 'active' : 'inactive'"
+            :style="`background: ${cardBg(t)}`"
+            @click="goTo(i)">
+
+            <!-- Accent strip -->
+            <div class="card-accent-strip" :style="`background: ${cardAccent(t)}`"></div>
+
+            <!-- Shine overlay -->
+            <div class="card-shine"></div>
+
+            <!-- Network mark (top-right) -->
+            <div class="card-network" :style="`color: ${cardInk(t)}`">
+              <template x-if="cardNetwork(t) === 'visa'">
+                <div class="card-network-visa">visa</div>
+              </template>
+              <template x-if="cardNetwork(t) === 'amex'">
+                <div class="card-network-amex">amex</div>
+              </template>
+            </div>
+
+            <!-- Bank + name (bottom-left) -->
+            <div class="card-label">
+              <div class="card-bank" :style="`color: ${cardSub(t)}`" x-text="t.banco"></div>
+              <div class="card-name" :style="`color: ${cardInk(t)}`"
+                x-text="cardNetwork(t) === 'visa' ? 'Visa' : 'Amex'"></div>
+            </div>
+
+            <!-- Decorative pebble (bottom-right) -->
+            <div class="card-pebble"
+              :style="`background: ${cardTheme(t)==='santander' ? 'rgba(26,26,31,0.10)' : 'rgba(201,169,97,0.18)'}; border: 1px solid ${cardTheme(t)==='santander' ? 'rgba(26,26,31,0.10)' : 'rgba(255,255,255,0.10)'}`">
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Dots -->
+    <div class="dots">
+      <template x-for="(t, i) in tarjetas" :key="i">
+        <div class="dot" :class="i === activeIdx ? 'active' : ''"
+          :style="`width: ${i === activeIdx ? '18px' : '6px'}`"
+          @click="goTo(i)"></div>
+      </template>
+    </div>
+
+    <!-- ── ALERT BANNERS (solo para la tarjeta activa) ──── -->
+    <template x-if="activeTarjeta">
+      <div>
+        <template x-for="alerta in activeTarjeta.alertas.filter(a => a !== 'deuda_usd')" :key="alerta">
+          <div class="alert-banner" :class="alerta">
+            <span x-text="{
+              vencimiento_hoy:     '⚠️ Hoy vence el resumen — débito automático activo',
+              vencimiento_proximo: '🔔 Vence en ' + activeTarjeta.dias_para_vencimiento + ' días',
+              revisar_resumen:     '📋 Revisá el resumen del ciclo cerrado',
+              cierre_hoy:         '📅 Hoy cierra el ciclo de esta tarjeta'
+            }[alerta] || alerta"></span>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <!-- ── TIMELINE ──────────────────────────────────────── -->
+    <template x-if="activeTarjeta && (activeTarjeta.ultimo_cierre || activeTarjeta.proximo_cierre)">
+      <div class="timeline-card" style="margin-top: 12px">
+
+        <!-- Label dinámico -->
+        <div class="timeline-label"
+          :style="`color: ${timelineToneColor(timelineLabel(activeTarjeta).tone)}`"
+          x-text="timelineLabel(activeTarjeta).text">
+        </div>
+
+        <!-- Fechas -->
+        <div class="timeline-dates">
+          <div class="timeline-date left" x-text="fmtFecha(activeTarjeta.ultimo_cierre || estimarUltimoCierre(activeTarjeta))"></div>
+          <div class="timeline-date mid"
+            :style="isVencimientoHoy(activeTarjeta) ? 'color:var(--alert)' : ''"
+            x-text="fmtFecha(activeTarjeta.proximo_vencimiento)"></div>
+          <div class="timeline-date right" x-text="fmtFecha(activeTarjeta.proximo_cierre)"></div>
+        </div>
+
+        <!-- Barra -->
+        <div class="timeline-bar">
+          <div class="timeline-track"></div>
+          <div class="timeline-fill"
+            :style="`width: calc((100% - 12px) * ${timelinePos(activeTarjeta)})`">
+          </div>
+
+          <!-- Anchor dots en 0%, 50%, 100% -->
+          <template x-for="(p, i) in [0, 0.5, 1]" :key="i">
+            <div class="timeline-anchor"
+              :style="`
+                left: calc(${p * 100}% - 4px);
+                background: ${timelinePos(activeTarjeta) >= p ? 'var(--ink)' : 'var(--paper)'};
+                border: 1.5px solid ${timelinePos(activeTarjeta) >= p ? 'var(--ink)' : 'var(--hairline-2)'}
+              `">
+            </div>
+          </template>
+
+          <!-- Marcador vivo -->
+          <div class="timeline-marker"
+            :style="`
+              left: calc(${timelinePos(activeTarjeta) * 100}% - 9px);
+              background: ${isVencimientoHoy(activeTarjeta) ? 'var(--alert)' : 'var(--ink)'}
+            `">
+          </div>
+        </div>
+
+        <!-- Labels -->
+        <div class="timeline-labels">
+          <div class="timeline-lbl left">Cierre</div>
+          <div class="timeline-lbl mid"
+            :style="isVencimientoHoy(activeTarjeta) ? 'color:var(--alert)' : ''">
+            Vencimiento
+          </div>
+          <div class="timeline-lbl right">Próx. cierre</div>
+        </div>
+      </div>
+    </template>
+
+    <!-- ── CICLO ACTUAL ──────────────────────────────────── -->
+    <template x-if="activeTarjeta">
+      <div>
+        <div class="section-label">Ciclo actual</div>
+
+        <!-- Movimientos del ciclo -->
+        <div class="amount-card">
+          <div class="amount-card__header">
+            <div class="amount-card__title">Movimientos</div>
+          </div>
+          <div class="amount-card__ars"
+            x-text="'$ ' + fmtArs(activeTarjeta.consumos_ciclo_ars)"></div>
+          <div class="amount-card__usd"
+            x-text="'U$S ' + fmtUsd(activeTarjeta.consumos_ciclo_usd)"></div>
+          <div class="amount-card__footer" x-show="activeTarjeta.ultimo_cierre">
+            <span x-text="'Desde ' + fmtFecha(activeTarjeta.ultimo_cierre || estimarUltimoCierre(activeTarjeta))"></span>
+          </div>
+        </div>
+
+        <!-- Saldo a pagar -->
+        <div class="section-label">Resumen cerrado</div>
+        <div class="amount-card">
+          <div class="amount-card__header">
+            <div class="amount-card__title">Saldo a pagar</div>
+          </div>
+          <div class="amount-card__ars"
+            :style="activeTarjeta.saldo_pendiente_ars > 0 ? '' : 'color:var(--ink-3)'"
+            x-text="'$ ' + fmtArs(activeTarjeta.saldo_pendiente_ars)"></div>
+          <div class="amount-card__usd"
+            :style="activeTarjeta.saldo_pendiente_usd > 0 ? 'color:var(--dolar)' : 'color:var(--ink-3)'"
+            x-text="'U$S ' + fmtUsd(activeTarjeta.saldo_pendiente_usd)"></div>
+          <div class="amount-card__footer">
+            <div class="debito-badge on">
+              <div class="dot-badge"></div>
+              Débito automático activo
+            </div>
+            <span style="font-size:11px; color:var(--ink-3)"
+              x-text="'Vence ' + fmtFecha(activeTarjeta.proximo_vencimiento)"></span>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+    <!-- Empty state -->
+    <div class="empty" x-show="!loading && tarjetas.length === 0">
+      No hay tarjetas configuradas
+    </div>
+
+  </div><!-- /scroll-body -->
+
+</div><!-- /screen -->
+
+<script src="../shared/pin-lock.js"></script>
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+</script>
+</body>
+</html>
