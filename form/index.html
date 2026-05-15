@@ -386,13 +386,57 @@
       color: var(--ink-2); margin-top: 6px;
     }
 
+    /* ---- Swipe wrapper ---- */
+    .swipe-wrap {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .swipe-wrap:last-child { border-bottom: 0; }
+
+    /* Fondos de acción (quedan debajo del contenido) */
+    .swipe-bg {
+      position: absolute; top: 0; bottom: 0;
+      display: flex; align-items: center;
+      width: 110px;
+    }
+    .swipe-bg--dup {
+      left: 0; background: var(--positive-soft);
+      padding-left: 20px;
+    }
+    .swipe-bg--del {
+      right: 0; background: var(--alert-soft);
+      justify-content: flex-end; padding-right: 20px;
+    }
+
+    /* Círculo de confirmación (estilo iOS Clock) */
+    .swipe-circle {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+      transition: transform var(--dur-fast) var(--ease),
+                  opacity var(--dur-fast) var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .swipe-circle:active { transform: scale(0.88) !important; }
+    .swipe-circle--dup { background: var(--positive); color: #fff; }
+    .swipe-circle--del { background: var(--alert);    color: #fff; }
+
+    /* Contenido deslizable */
+    .swipe-content {
+      background: var(--paper);
+      will-change: transform;
+    }
+    .swipe-content.snap {
+      transition: transform var(--dur-base) var(--ease);
+    }
+
     /* ---- Movement row ---- */
     .movement-row {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 0;
-      border-bottom: 1px solid var(--hairline);
     }
-    .movement-row:last-child { border-bottom: 0; }
     .movement-row__icon {
       width: 32px; height: 32px; border-radius: var(--r-1);
       background: var(--paper-2);
@@ -407,16 +451,8 @@
     .movement-row__sub { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
     .movement-row__amount {
       font-size: 14px; font-weight: 500;
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: tabular-nums; text-align: right;
     }
-    .movement-row__dup {
-      font-size: 11px; color: var(--ink-3);
-      cursor: pointer; background: none; border: none;
-      padding: 0; font-family: var(--font-sans);
-      transition: color var(--dur-fast) var(--ease);
-      display: block; margin-top: 2px;
-    }
-    .movement-row__dup:hover { color: var(--primary); }
 
     /* ---- Bottom bar ---- */
     .bottom-bar {
@@ -962,21 +998,47 @@
     <div class="section-label" style="margin-top:14px">Últimos movimientos</div>
     <div>
       <template x-for="mv in ultimosMovimientos.slice(0,5)" :key="mv.id">
-        <div class="movement-row">
-          <div class="movement-row__icon">
-            <div class="movement-row__dot"
-              :style="`background:${personaColor(mv.quien_gasto || mv.cargado_por)}`"></div>
+        <div class="swipe-wrap"
+          @touchstart="swipeStart($event, mv.id)"
+          @touchmove="swipeMove($event, mv.id)"
+          @touchend="swipeEnd($event, mv.id)">
+
+          <!-- Fondo izquierda: duplicar (deslizar →) -->
+          <div class="swipe-bg swipe-bg--dup">
+            <button class="swipe-circle swipe-circle--dup"
+              x-show="swipeOffset(mv.id) >= 60"
+              :style="`transform:scale(${Math.min(1, (swipeOffset(mv.id)-60)/28)})`"
+              @click.stop="swipeConfirmDup(mv.id)"
+              title="Duplicar">＋</button>
           </div>
-          <div style="flex:1;min-width:0">
-            <div class="movement-row__title" x-text="mv.titulo || mv.categoria"></div>
-            <div class="movement-row__sub"
-              x-text="(mv.categoria || mv.tipo) + (mv.medio_pago ? ' · ' + mv.medio_pago : '')"></div>
+
+          <!-- Fondo derecha: eliminar (deslizar ←) -->
+          <div class="swipe-bg swipe-bg--del">
+            <button class="swipe-circle swipe-circle--del"
+              x-show="swipeOffset(mv.id) <= -60"
+              :style="`transform:scale(${Math.min(1, (-swipeOffset(mv.id)-60)/28)})`"
+              @click.stop="swipeConfirmDel(mv.id)"
+              title="Eliminar">🗑</button>
           </div>
-          <div style="text-align:right">
+
+          <!-- Contenido deslizable -->
+          <div class="movement-row swipe-content"
+            :class="{'snap': !swipeDragging(mv.id)}"
+            :style="`transform:translateX(${swipeOffset(mv.id)}px)`"
+            @click="swipeOffset(mv.id) !== 0 && swipeReset(mv.id)">
+            <div class="movement-row__icon">
+              <div class="movement-row__dot"
+                :style="`background:${personaColor(mv.quien_gasto || mv.cargado_por)}`"></div>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div class="movement-row__title" x-text="mv.titulo || mv.categoria"></div>
+              <div class="movement-row__sub"
+                x-text="(mv.categoria || mv.tipo) + (mv.medio_pago ? ' · ' + mv.medio_pago : '')"></div>
+            </div>
             <div class="movement-row__amount"
               :style="`color:${mv.moneda==='USD' ? 'var(--dolar)' : 'var(--peso)'}`"
-              x-text="(mv.moneda==='ARS' ? '$ ' : 'U$S ') + formatMonto(mv.monto, mv.moneda)"></div>
-            <button class="movement-row__dup" @click="duplicar(mv)">Duplicar →</button>
+              x-text="(mv.moneda==='ARS' ? '$ ' : 'U$S ') + formatMonto(mv.monto, mv.moneda)">
+            </div>
           </div>
         </div>
       </template>
