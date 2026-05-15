@@ -46,11 +46,11 @@ function cargarDatosTarjetas() {
     'Macro Selecta Visa': {
       dia_cierre:            7,
       dia_vencimiento:       15,
-      saldo_pendiente_ars:   1189799.10,
+      saldo_pendiente_ars:   0,             // pagado por débito automático el 15/05
       saldo_pendiente_usd:   0,
       ultimo_cierre:         '2026-05-07',
       proximo_cierre:        '2026-06-11',
-      proximo_vencimiento:   '2026-05-15',   // ⚠ vence HOY 15/05
+      proximo_vencimiento:   '2026-06-15',  // próximo vencimiento (post cierre 11/06)
     },
     'Macro Selecta Amex': {
       dia_cierre:            23,
