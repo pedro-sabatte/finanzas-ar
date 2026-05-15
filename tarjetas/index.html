@@ -511,14 +511,15 @@
                   <div style="color:#C9A961;font-size:8.5px;font-weight:600;letter-spacing:0.26em;text-transform:uppercase;margin-top:3px">Selecta</div>
                 </div>
 
-                <!-- Center: Gold U-arc (signature mark of Macro Selecta) -->
-                <svg style="position:absolute;top:0;left:0;width:100%;height:100%" viewBox="0 0 272 172" preserveAspectRatio="xMidYMid meet">
-                  <!-- Outer arc -->
-                  <path d="M 54 -2 L 54 106 Q 54 178 136 178 Q 218 178 218 106 L 218 -2"
-                        fill="none" stroke="#C9A961" stroke-width="2.4" stroke-linecap="round"/>
+                <!-- Center: Gold U-arc — overflow visible, clipeado por card overflow:hidden -->
+                <svg style="position:absolute;top:0;left:0;width:272px;height:172px;overflow:visible"
+                     viewBox="0 0 272 172">
+                  <!-- Outer arc: vertical lines salen arriba y abajo, se clipean en el borde de la card -->
+                  <path d="M 56 -10 L 56 118 Q 56 192 136 192 Q 216 192 216 118 L 216 -10"
+                        fill="none" stroke="#C9A961" stroke-width="2.2" stroke-linecap="butt"/>
                   <!-- Inner arc -->
-                  <path d="M 74 -2 L 74 99 Q 74 157 136 157 Q 198 157 198 99 L 198 -2"
-                        fill="none" stroke="#C9A961" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M 78 -10 L 78 110 Q 78 168 136 168 Q 194 168 194 110 L 194 -10"
+                        fill="none" stroke="#C9A961" stroke-width="1.7" stroke-linecap="butt"/>
                 </svg>
 
                 <!-- Subtle top shine -->
@@ -551,16 +552,16 @@
 
                 <!-- Top-right: Santander logo -->
                 <div style="position:absolute;top:15px;right:18px;display:flex;align-items:center;gap:7px">
-                  <!-- Santander flame — aproximación del logo real -->
-                  <svg viewBox="0 0 28 38" width="17" height="23" style="display:block;flex-shrink:0">
-                    <!-- Llama exterior -->
-                    <path d="M14 36 C14 36 1 25 1 15 C1 6.5 7 1 14 0.5 C21 1 27 6.5 27 15 C27 25 14 36 14 36Z" fill="#EC0000"/>
-                    <!-- Llama media -->
-                    <path d="M14 30 C14 30 5 22 5 15 C5 9 9 4.5 14 3.5 C19 4.5 23 9 23 15 C23 22 14 30 14 30Z" fill="#CC0000"/>
-                    <!-- Núcleo -->
-                    <path d="M14 23 C14 23 9 18.5 9 15 C9 11.5 11.5 8.5 14 8 C16.5 8.5 19 11.5 19 15 C19 18.5 14 23 14 23Z" fill="#FF2222" opacity="0.5"/>
-                    <!-- Brillo interno -->
-                    <ellipse cx="11" cy="12" rx="2.5" ry="3.5" fill="rgba(255,255,255,0.18)" transform="rotate(-15 11 12)"/>
+                  <!-- Santander Spark — óvalo rojo + 3 wisps blancos (logo real) -->
+                  <svg viewBox="0 0 80 58" width="30" height="22" style="display:block;flex-shrink:0">
+                    <!-- Óvalo rojo base -->
+                    <ellipse cx="38" cy="46" rx="36" ry="12" fill="#EC0000"/>
+                    <!-- Wisp izquierdo -->
+                    <path d="M 9 52 C 8 38 14 18 25 4 L 28 6 C 18 20 14 42 17 52 Z" fill="white"/>
+                    <!-- Wisp central -->
+                    <path d="M 27 55 C 25 40 33 18 45 4 L 48 6 C 37 21 34 43 38 55 Z" fill="white"/>
+                    <!-- Wisp derecho -->
+                    <path d="M 45 56 C 43 41 53 17 66 4 L 69 7 C 57 21 54 44 57 56 Z" fill="white"/>
                   </svg>
                   <!-- Santander text + PLATINUM -->
                   <div>

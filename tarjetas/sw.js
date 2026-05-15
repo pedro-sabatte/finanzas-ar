@@ -1,4 +1,4 @@
-const CACHE_NAME = 'finanzas-tarjetas-v4';
+const CACHE_NAME = 'finanzas-tarjetas-v5';
 const STATIC_ASSETS = ['./', './index.html', './app.js', './manifest.json', '../shared/api-client.js', '../shared/formatters.js'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(STATIC_ASSETS).catch(() => {})));
