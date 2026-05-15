@@ -144,8 +144,9 @@ function getResumenTarjetas() {
     const consumosCiclo = movimientos.filter(mv => {
       if (mv.medio_pago !== t.nombre) return false;
       if (!mv.fecha) return false;
-      const f = String(mv.fecha).substring(0, 10);
-      if (ultimoCierre && f <= ultimoCierre) return false;  // antes del último cierre
+      const f = fechaAString_(mv.fecha);  // convierte Date object o string a yyyy-MM-dd
+      if (!f) return false;
+      if (ultimoCierre && f <= ultimoCierre) return false;
       return f <= hoyStr;
     });
 
@@ -220,13 +221,15 @@ function getResumenTarjetas() {
     };
   });
 
-  // Ordenar: alertas activas primero, luego por días para vencimiento
+  // Orden fijo: Macro Visa → Macro Amex → Santander Visa → Santander Amex → resto
+  const ORDEN_FIJO = ['Macro Selecta Visa', 'Macro Selecta Amex', 'Santander Platinum Visa', 'Santander Platinum Amex'];
   resumen.sort((a, b) => {
-    if (a.alertas.length > 0 && b.alertas.length === 0) return -1;
-    if (b.alertas.length > 0 && a.alertas.length === 0) return  1;
-    const dA = a.dias_para_vencimiento ?? 999;
-    const dB = b.dias_para_vencimiento ?? 999;
-    return dA - dB;
+    const iA = ORDEN_FIJO.indexOf(a.nombre);
+    const iB = ORDEN_FIJO.indexOf(b.nombre);
+    if (iA === -1 && iB === -1) return 0;
+    if (iA === -1) return 1;
+    if (iB === -1) return -1;
+    return iA - iB;
   });
 
   const todasLasTarjetas = hojaAObjetos('tarjetas');
