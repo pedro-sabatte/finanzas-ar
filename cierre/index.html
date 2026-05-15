@@ -72,6 +72,7 @@
       text-rendering: optimizeLegibility;
       font-variant-numeric: tabular-nums;
       font-feature-settings: 'cv11', 'ss01';
+      touch-action: manipulation;
       padding-top: env(safe-area-inset-top);
     }
 
@@ -325,7 +326,8 @@
 </head>
 <body>
 
-<script src="config.local.js" onerror="console.warn('config.local.js no encontrado')"></script>
+<script src="../shared/config.js"></script>
+<script src="config.local.js" onerror="/* ok, usando shared/config.js */"></script>
 <script src="../shared/formatters.js"></script>
 <script src="../shared/api-client.js"></script>
 
