@@ -27,10 +27,11 @@ function cierreApp() {
     // ============================================================
     async init() {
       this.mes = this.detectarMes();
+      // Primero resumen (cotizacion depende de él)
+      await this.cargarResumen();
       await Promise.all([
         this.cargarActivos(),
         this.cargarPagos(),
-        this.cargarResumen(),
         this.cargarCotizacion(),
       ]);
     },
@@ -152,8 +153,11 @@ function cierreApp() {
 
     ahorroOk() {
       if (!this.resumen || !this.objetivos.ahorro_ars) return null;
-      const ahorroReal = this.resumen.ahorro?.ars_equiv || 0;
-      return ahorroReal >= Number(this.objetivos.ahorro_ars);
+      // ahorro.usd_equiv viene del backend; convertimos a ARS con la cotización disponible
+      const ahorroUsd  = this.resumen.ahorro?.usd_equiv || 0;
+      const cotiz      = this.cotizacion || this.resumen.cotizacion_mep || null;
+      const ahorroArs  = cotiz ? ahorroUsd * cotiz : 0;
+      return ahorroArs >= Number(this.objetivos.ahorro_ars);
     },
 
     // ============================================================
@@ -198,8 +202,9 @@ function cierreApp() {
 
         if (!data.ok) throw new Error(data.message);
 
-        // Actualizar resumen con datos del cierre
-        const resumenCierre = await api.get('cierre_pendiente'); // reusa el endpoint de resumen
+        // Actualizar resumen con datos del cierre completo
+        const resumenCierre = await api.get('resumen_cierre', { mes: this.mes });
+        if (resumenCierre.ok) this.resumen = resumenCierre;
         this.confirmado = true;
         this.mostrarToast('✓ Cierre de ' + fmt.mes(this.mes) + ' completado');
 

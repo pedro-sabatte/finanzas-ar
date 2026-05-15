@@ -45,6 +45,8 @@ function dashApp() {
       this.mesActual = fmt.mesActualStr();
       this.verificarBannerCierre();
       await this.cargarTodo();
+      // Lazy-load de tabs de Inversiones e Histórico al cambiar de vista
+      this.$watch('vistaActual', (vista) => this.onVistaChange(vista));
     },
 
     verificarBannerCierre() {
@@ -215,7 +217,9 @@ function dashApp() {
 
     ahorroOk() {
       if (!this.resumen || !this.resumen.objetivos?.ahorro_ars) return null;
-      const ahorroArs = (this.resumen.ahorro?.usd_equiv || 0) * (this.resumen.cotizacion_mep || 1200);
+      const cotiz = this.resumen.cotizacion_mep;
+      if (!cotiz) return null; // sin cotización no podemos comparar
+      const ahorroArs = (this.resumen.ahorro?.usd_equiv || 0) * cotiz;
       return ahorroArs >= this.resumen.objetivos.ahorro_ars;
     },
 
@@ -251,9 +255,3 @@ function dashApp() {
   };
 }
 
-// Watcher para cargar datos al cambiar de vista
-document.addEventListener('alpine:init', () => {
-  Alpine.effect(() => {
-    // Se ejecuta cuando Alpine está listo
-  });
-});

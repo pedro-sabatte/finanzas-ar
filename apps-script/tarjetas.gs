@@ -186,7 +186,7 @@ function getResumenTarjetas() {
     if (diasVencimiento !== null) {
       if (diasVencimiento === 0)                         alertas.push('vencimiento_hoy');
       if (diasVencimiento === 1 || diasVencimiento === 2) alertas.push('vencimiento_proximo');
-      if (diasVencimiento < 0 && saldoArs > 0)           alertas.push('vencimiento_pasado');
+      if (diasVencimiento < 0 && (saldoArs > 0 || saldoUsd > 0)) alertas.push('vencimiento_pasado');
     }
     if (saldoUsd > 0)                                    alertas.push('deuda_usd');
 

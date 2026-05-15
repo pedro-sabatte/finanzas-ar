@@ -372,9 +372,11 @@ function getPatrimonioTotal() {
   const calcularSaldoCuenta = (nombreCuenta, moneda) => {
     let saldo = 0;
     movimientos.forEach(mv => {
+      // Entrada: transferencias o ingresos que llegan a esta cuenta
       if (mv.cuenta_destino === nombreCuenta && mv.moneda === moneda) saldo += Number(mv.monto);
+      // Salida: transferencias o gastos que salen de esta cuenta
       if (mv.cuenta_origen === nombreCuenta && mv.moneda === moneda) saldo -= Number(mv.monto);
-      if (mv.tipo === 'ingreso' && mv.cuenta_destino === nombreCuenta && mv.moneda === moneda) saldo += Number(mv.monto);
+      // Gastos con tarjeta: el débito se refleja en el medio_pago (tarjeta) no en cuenta_origen
       if (mv.tipo === 'gasto' && mv.medio_pago === nombreCuenta && mv.moneda === moneda) saldo -= Number(mv.monto);
     });
     return saldo;
@@ -513,9 +515,11 @@ function getMetaLargoPlazo() {
 function getCatalogos() {
   return {
     ok: true,
-    cuentas: hojaAObjetos('cuentas').filter(c => c.activa),
-    tarjetas: hojaAObjetos('tarjetas'),
-    categorias: hojaAObjetos('categorias'),
-    recurrentes: hojaAObjetos('recurrentes').filter(r => r.activa)
+    cuentas:                hojaAObjetos('cuentas').filter(c => c.activa),
+    tarjetas:               hojaAObjetos('tarjetas'),
+    categorias:             hojaAObjetos('categorias'),
+    recurrentes:            hojaAObjetos('recurrentes').filter(r => r.activa),
+    inversiones_compras:    hojaAObjetos('inversiones_compras'),
+    inversiones_valuaciones: hojaAObjetos('inversiones_valuaciones'),
   };
 }

@@ -78,6 +78,7 @@ function doGet(e) {
       case 'alertas_anomalias':     return responder(getAlertasAnomalias(e.parameter.mes));
       case 'comparativa_anual':     return responder(getComparativaAnual(e.parameter.mes_actual));
       case 'cierre_pendiente':      return responder(getCierrePendiente());
+      case 'resumen_cierre':        return responder(getResumenCierre(e.parameter.mes));
       case 'resumen_tarjetas':      return responder(getResumenTarjetas());
       default:
         return responder({ ok: false, message: 'Acción desconocida: ' + accion });

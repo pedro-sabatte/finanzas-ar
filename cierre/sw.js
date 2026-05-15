@@ -1,6 +1,6 @@
 // Service Worker — Cierre PWA
 const CACHE_NAME = 'finanzas-cierre-v1';
-const STATIC_ASSETS = ['./', './index.html', './app.js', './manifest.json', '../shared/api-client.js', '../shared/formatters.js'];
+const STATIC_ASSETS = ['./', './index.html', './app.js', './manifest.json', './config.local.js', '../shared/api-client.js', '../shared/formatters.js', '../shared/config.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(STATIC_ASSETS).catch(() => {})));

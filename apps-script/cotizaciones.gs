@@ -43,17 +43,22 @@ function fetchCotizacionMEP() {
     const hoyStr   = hoy();
 
     // Evitar duplicados: si ya existe entrada de hoy, actualizar
-    const registros = hojaAObjetos('cotizaciones');
-    const existente = registros.find(c => c.fecha === hoyStr && c.tipo === 'mep');
-    if (existente) {
-      const fila = encontrarFilaPorId('cotizaciones', existente.id);
-      if (fila > 0) {
-        const headers = hojaCot.getRange(1, 1, 1, hojaCot.getLastColumn()).getValues()[0];
-        hojaCot.getRange(fila, headers.indexOf('compra')   + 1).setValue(compra);
-        hojaCot.getRange(fila, headers.indexOf('venta')    + 1).setValue(venta);
-        hojaCot.getRange(fila, headers.indexOf('promedio') + 1).setValue(promedio);
-        hojaCot.getRange(fila, headers.indexOf('timestamp_fetch') + 1).setValue(new Date());
-      }
+    const datos = hojaCot.getDataRange().getValues();
+    const headers = datos[0];
+    const colFecha = headers.indexOf('fecha');
+    const colTipo  = headers.indexOf('tipo');
+    let filaExistente = -1;
+    for (let i = 1; i < datos.length; i++) {
+      const fStr = datos[i][colFecha] instanceof Date
+        ? Utilities.formatDate(datos[i][colFecha], 'America/Argentina/Buenos_Aires', 'yyyy-MM-dd')
+        : String(datos[i][colFecha]).substring(0, 10);
+      if (fStr === hoyStr && datos[i][colTipo] === 'mep') { filaExistente = i + 1; break; }
+    }
+    if (filaExistente > 0) {
+      hojaCot.getRange(filaExistente, headers.indexOf('compra')          + 1).setValue(compra);
+      hojaCot.getRange(filaExistente, headers.indexOf('venta')           + 1).setValue(venta);
+      hojaCot.getRange(filaExistente, headers.indexOf('promedio')        + 1).setValue(promedio);
+      hojaCot.getRange(filaExistente, headers.indexOf('timestamp_fetch') + 1).setValue(new Date());
     } else {
       hojaCot.appendRow([hoyStr, 'mep', compra, venta, promedio, new Date()]);
     }
@@ -97,17 +102,22 @@ function fetchTodasLasCotizaciones() {
       const venta   = data.venta   || data.sell || 0;
       const promedio= (compra + venta) / 2;
 
-      const registros = hojaAObjetos('cotizaciones');
-      const existente = registros.find(c => c.fecha === hoyStr && c.tipo === ep.tipo);
-      if (existente) {
-        const fila = encontrarFilaPorId('cotizaciones', existente.id);
-        if (fila > 0) {
-          const headers = hojaCot.getRange(1, 1, 1, hojaCot.getLastColumn()).getValues()[0];
-          hojaCot.getRange(fila, headers.indexOf('compra')   + 1).setValue(compra);
-          hojaCot.getRange(fila, headers.indexOf('venta')    + 1).setValue(venta);
-          hojaCot.getRange(fila, headers.indexOf('promedio') + 1).setValue(promedio);
-          hojaCot.getRange(fila, headers.indexOf('timestamp_fetch') + 1).setValue(new Date());
-        }
+      const datos2  = hojaCot.getDataRange().getValues();
+      const hdrs2   = datos2[0];
+      const cFecha2 = hdrs2.indexOf('fecha');
+      const cTipo2  = hdrs2.indexOf('tipo');
+      let fila2 = -1;
+      for (let i = 1; i < datos2.length; i++) {
+        const fStr = datos2[i][cFecha2] instanceof Date
+          ? Utilities.formatDate(datos2[i][cFecha2], 'America/Argentina/Buenos_Aires', 'yyyy-MM-dd')
+          : String(datos2[i][cFecha2]).substring(0, 10);
+        if (fStr === hoyStr && datos2[i][cTipo2] === ep.tipo) { fila2 = i + 1; break; }
+      }
+      if (fila2 > 0) {
+        hojaCot.getRange(fila2, hdrs2.indexOf('compra')          + 1).setValue(compra);
+        hojaCot.getRange(fila2, hdrs2.indexOf('venta')           + 1).setValue(venta);
+        hojaCot.getRange(fila2, hdrs2.indexOf('promedio')        + 1).setValue(promedio);
+        hojaCot.getRange(fila2, hdrs2.indexOf('timestamp_fetch') + 1).setValue(new Date());
       } else {
         hojaCot.appendRow([hoyStr, ep.tipo, compra, venta, promedio, new Date()]);
       }

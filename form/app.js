@@ -273,12 +273,19 @@ function formApp() {
     },
 
     async deshacer() {
-      if (!this.ultimoGuardado) return;
+      if (!this.ultimoGuardado?.id_creado) return;
       this.toast.visible = false;
       if (this.toast.timer) clearTimeout(this.toast.timer);
-      // TODO: implementar endpoint delete_movimiento en Apps Script para deshacer
-      // Por ahora solo oculta el toast
-      console.log('Deshacer — movimiento:', this.ultimoGuardado.id_creado);
+      try {
+        const res = await api.post('eliminar_movimiento', { id: this.ultimoGuardado.id_creado });
+        if (res.ok) {
+          console.log('Movimiento eliminado:', this.ultimoGuardado.id_creado);
+        } else {
+          console.warn('No se pudo deshacer:', res.message);
+        }
+      } catch(e) {
+        console.warn('Error al deshacer:', e.message);
+      }
       this.ultimoGuardado = null;
     },
 

@@ -50,13 +50,6 @@ function tarjetasApp() {
     // ── Carousel ─────────────────────────────────────────────
     CARD_W: 272,
     CARD_GAP: 14,
-    CARD_PAD: 20,
-
-    carouselTransform() {
-      const base = this.activeIdx * (this.CARD_W + this.CARD_GAP);
-      const drag = this.isDragging ? this.dragOffset : 0;
-      return `translateX(${-base + drag}px)`;
-    },
 
     carouselStart(e) {
       const t = e.touches[0];
