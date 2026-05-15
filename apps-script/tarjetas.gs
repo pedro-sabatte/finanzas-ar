@@ -129,7 +129,9 @@ function fechaAString_(val) {
 }
 
 function getResumenTarjetas() {
-  const tarjetas    = hojaAObjetos('tarjetas').filter(t => t.activa == true || t.activa === 'TRUE');
+  const tarjetas    = hojaAObjetos('tarjetas').filter(t =>
+    t.activa === true || t.activa === 'TRUE' || t.activa === 'true' || t.activa === 1
+  );
   const movimientos = hojaAObjetos('movimientos');
   const cotizacion  = getCotizacionHoy();
   const ahora       = new Date();
@@ -219,7 +221,16 @@ function getResumenTarjetas() {
     return dA - dB;
   });
 
-  return { ok: true, tarjetas: resumen, cotizacion_usada: cotizacion ? cotizacion.promedio : null };
+  const todasLasTarjetas = hojaAObjetos('tarjetas');
+  return {
+    ok: true,
+    tarjetas: resumen,
+    cotizacion_usada: cotizacion ? cotizacion.promedio : null,
+    _debug: resumen.length === 0
+      ? { total_en_sheet: todasLasTarjetas.length, activas_encontradas: 0,
+          valores_activa: todasLasTarjetas.map(t => ({ nombre: t.nombre, activa: t.activa })) }
+      : undefined,
+  };
 }
 
 // ============================================================
