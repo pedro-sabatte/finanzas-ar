@@ -59,7 +59,7 @@ function cargarDatosTarjetas() {
       saldo_pendiente_usd:   0,
       ultimo_cierre:         '2026-04-23',
       proximo_cierre:        '2026-05-21',
-      proximo_vencimiento:   '2026-06-04',  // próximo vencimiento (04/05 ya cobrado)
+      proximo_vencimiento:   '2026-05-04',  // vencimiento del ciclo cerrado 23/04 (ya cobrado por débito)
     },
     'Santander Platinum Visa': {
       dia_cierre:            28,
@@ -181,7 +181,7 @@ function getResumenTarjetas() {
     if (diasVencimiento !== null) {
       if (diasVencimiento === 0)                    alertas.push('vencimiento_hoy');
       if (diasVencimiento === 1 || diasVencimiento === 2) alertas.push('vencimiento_proximo');
-      if (diasVencimiento < 0)                      alertas.push('vencimiento_pasado');
+      if (diasVencimiento < 0 && saldoArs > 0)       alertas.push('vencimiento_pasado');  // solo si queda saldo impago
     }
     // Alerta especial: tiene deuda en USD
     if (Number(t.saldo_pendiente_usd || 0) > 0)    alertas.push('deuda_usd');
