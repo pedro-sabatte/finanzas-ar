@@ -55,11 +55,11 @@ function cargarDatosTarjetas() {
     'Macro Selecta Amex': {
       dia_cierre:            23,
       dia_vencimiento:       4,
-      saldo_pendiente_ars:   990940.15,
-      saldo_pendiente_usd:   40,
+      saldo_pendiente_ars:   0,             // pagado por débito automático el 04/05
+      saldo_pendiente_usd:   0,
       ultimo_cierre:         '2026-04-23',
       proximo_cierre:        '2026-05-21',
-      proximo_vencimiento:   '2026-06-04',   // próximo vencimiento (el de 04/05 ya pasó)
+      proximo_vencimiento:   '2026-06-04',  // próximo vencimiento (04/05 ya cobrado)
     },
     'Santander Platinum Visa': {
       dia_cierre:            28,
