@@ -21,6 +21,12 @@ function tarjetasApp() {
     sheetMovs: [],
     sheetTarjeta: null,
 
+    // Sheet cerrar ciclo
+    showCierreCiclo: false,
+    cierreCicloTarjeta: null,
+    cierreCicloForm: { saldo_ars: '', saldo_usd: '', fecha_cierre: '', proximo_cierre: '', proximo_vencimiento: '' },
+    cierreCicloLoading: false,
+
     // ── Init ────────────────────────────────────────────────
     async init() {
       await this.cargar();
@@ -110,6 +116,75 @@ function tarjetasApp() {
       this.sheetTarjeta = t;
       this.sheetMovs = t.movimientos_ciclo || [];
       this.showMovs = true;
+    },
+
+    // ── Cerrar ciclo ─────────────────────────────────────────
+    abrirCierreCiclo() {
+      const t = this.activeTarjeta;
+      if (!t) return;
+      this.cierreCicloTarjeta = t;
+
+      // Pre-fill: el cierre que acaba de pasar es el proximo_cierre actual
+      const fechaCierre = t.proximo_cierre || this.hoy();
+
+      // Estimar próximo cierre = +1 mes desde la fecha de cierre
+      const dCierre = new Date(fechaCierre + 'T12:00:00-03:00');
+      dCierre.setMonth(dCierre.getMonth() + 1);
+      const proxCierre = dCierre.toISOString().substring(0, 10);
+
+      // Estimar próximo vencimiento = +1 mes desde el vencimiento actual
+      const fechaVenc = t.proximo_vencimiento;
+      let proxVenc = '';
+      if (fechaVenc) {
+        const dVenc = new Date(fechaVenc + 'T12:00:00-03:00');
+        dVenc.setMonth(dVenc.getMonth() + 1);
+        proxVenc = dVenc.toISOString().substring(0, 10);
+      }
+
+      this.cierreCicloForm = {
+        saldo_ars: '',
+        saldo_usd: '',
+        fecha_cierre: fechaCierre,
+        proximo_cierre: proxCierre,
+        proximo_vencimiento: proxVenc,
+      };
+      this.showCierreCiclo = true;
+    },
+
+    async confirmarCierreCiclo() {
+      const t = this.cierreCicloTarjeta;
+      if (!t || this.cierreCicloLoading) return;
+      this.cierreCicloLoading = true;
+      try {
+        await api.post('actualizar_saldo_tarjeta', {
+          id: t.id,
+          saldo_pendiente_ars: parseFloat(this.cierreCicloForm.saldo_ars) || 0,
+          saldo_pendiente_usd: parseFloat(this.cierreCicloForm.saldo_usd) || 0,
+          ultimo_cierre:        this.cierreCicloForm.fecha_cierre,
+          proximo_cierre:       this.cierreCicloForm.proximo_cierre,
+          proximo_vencimiento:  this.cierreCicloForm.proximo_vencimiento,
+        });
+        this.showCierreCiclo = false;
+        await this.cargar();
+      } catch(e) {
+        console.error('Error al cerrar ciclo:', e);
+      } finally {
+        this.cierreCicloLoading = false;
+      }
+    },
+
+    async pagarUsd() {
+      const t = this.activeTarjeta;
+      if (!t) return;
+      await api.post('actualizar_saldo_tarjeta', { id: t.id, saldo_pendiente_usd: 0 });
+      await this.cargar();
+    },
+
+    async pagarArs() {
+      const t = this.activeTarjeta;
+      if (!t) return;
+      await api.post('actualizar_saldo_tarjeta', { id: t.id, saldo_pendiente_ars: 0 });
+      await this.cargar();
     },
 
     // ── Card theme ───────────────────────────────────────────
