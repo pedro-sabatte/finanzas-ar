@@ -11,6 +11,10 @@ config.local.js
 node_modules/
 npm-debug.log*
 
+# Design export (archivos temporales, no parte de la app)
+design-export.json
+design-extracted/
+
 # OS
 .DS_Store
 Thumbs.db
