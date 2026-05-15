@@ -30,7 +30,7 @@ function formApp() {
         'Suscripciones digitales','Deporte','OQU','Regalos','Otros'
       ],
       categorias_ingreso: [
-        'Sueldo principal','Sueldo Juani','Freelance / honorarios',
+        'Sueldo Pedro','Sueldo Juani','Freelance / honorarios',
         'Sueldo USD (ARQ)','Rendimientos de inversiones',
         'Reintegros / cashback','Regalos / ayuda familiar','Bono'
       ],
