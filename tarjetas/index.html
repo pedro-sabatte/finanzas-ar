@@ -137,51 +137,10 @@
     .card-token.inactive { opacity: 0.52; }
     .card-token.active   { opacity: 1; }
 
-    /* Accent strip top-left */
-    .card-accent-strip {
-      position: absolute; top: 0; left: 0;
-      width: 36px; height: 3px;
-      border-bottom-right-radius: 2px;
-    }
-    /* Network mark top-right */
-    .card-network {
-      position: absolute; top: 16px; right: 18px;
-    }
-    .card-network-visa {
-      font-family: var(--font-serif);
-      font-style: italic; font-weight: 500;
-      font-size: 21px; letter-spacing: -0.02em; line-height: 1;
-    }
-    .card-network-amex {
-      font-family: var(--font-sans);
-      font-weight: 700; font-size: 10px;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      padding: 3px 5px; border-radius: 2px; line-height: 1;
-      border: 1px solid currentColor;
-    }
-    /* Bank label + name bottom-left */
-    .card-label {
-      position: absolute; left: 20px; bottom: 18px;
-      display: flex; flex-direction: column; gap: 2px;
-    }
-    .card-bank {
-      font-size: 9px; font-weight: 500;
-      letter-spacing: 0.14em; text-transform: uppercase;
-    }
-    .card-name {
-      font-family: var(--font-serif);
-      font-size: 20px; font-weight: 400;
-      letter-spacing: -0.015em; line-height: 1.05;
-    }
-    /* Decorative pebble bottom-right */
-    .card-pebble {
-      position: absolute; right: 20px; bottom: 20px;
-      width: 20px; height: 20px; border-radius: 50%;
-    }
-    /* Shine overlay */
-    .card-shine {
-      position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse at 90% 15%, rgba(255,255,255,0.18) 0%, transparent 55%);
+    /* Card inner content: absolute positioning base */
+    .card-token > template + div,
+    .card-token > div {
+      position: absolute; inset: 0;
     }
 
     /* ── Dots indicator ─────────────────────────────────────── */
@@ -542,33 +501,96 @@
             :style="`background: ${cardBg(t)}`"
             @click="goTo(i)">
 
-            <!-- Accent strip -->
-            <div class="card-accent-strip" :style="`background: ${cardAccent(t)}`"></div>
+            <!-- ═══ MACRO card ═══ -->
+            <template x-if="cardTheme(t) === 'macro'">
+              <div style="position:absolute;inset:0;overflow:hidden">
 
-            <!-- Shine overlay -->
-            <div class="card-shine"></div>
+                <!-- Top-left: Macro Selecta wordmark -->
+                <div style="position:absolute;top:19px;left:20px">
+                  <div style="color:#fff;font-size:13px;font-weight:300;letter-spacing:0.04em;line-height:1">Macro</div>
+                  <div style="color:#C9A961;font-size:8.5px;font-weight:600;letter-spacing:0.26em;text-transform:uppercase;margin-top:3px">Selecta</div>
+                </div>
 
-            <!-- Network mark (top-right) -->
-            <div class="card-network" :style="`color: ${cardInk(t)}`">
-              <template x-if="cardNetwork(t) === 'visa'">
-                <div class="card-network-visa">visa</div>
-              </template>
-              <template x-if="cardNetwork(t) === 'amex'">
-                <div class="card-network-amex">amex</div>
-              </template>
-            </div>
+                <!-- Center: Gold U-arc (signature mark of Macro Selecta) -->
+                <svg style="position:absolute;top:0;left:0;width:100%;height:100%" viewBox="0 0 272 172" preserveAspectRatio="xMidYMid meet">
+                  <!-- Outer arc -->
+                  <path d="M 54 -2 L 54 106 Q 54 178 136 178 Q 218 178 218 106 L 218 -2"
+                        fill="none" stroke="#C9A961" stroke-width="2.4" stroke-linecap="round"/>
+                  <!-- Inner arc -->
+                  <path d="M 74 -2 L 74 99 Q 74 157 136 157 Q 198 157 198 99 L 198 -2"
+                        fill="none" stroke="#C9A961" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
 
-            <!-- Bank + name (bottom-left) -->
-            <div class="card-label">
-              <div class="card-bank" :style="`color: ${cardSub(t)}`" x-text="t.banco"></div>
-              <div class="card-name" :style="`color: ${cardInk(t)}`"
-                x-text="cardNetwork(t) === 'visa' ? 'Visa' : 'Amex'"></div>
-            </div>
+                <!-- Subtle top shine -->
+                <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 10%,rgba(255,255,255,0.07) 0%,transparent 60%);pointer-events:none"></div>
 
-            <!-- Decorative pebble (bottom-right) -->
-            <div class="card-pebble"
-              :style="`background: ${cardTheme(t)==='santander' ? 'rgba(26,26,31,0.10)' : 'rgba(201,169,97,0.18)'}; border: 1px solid ${cardTheme(t)==='santander' ? 'rgba(26,26,31,0.10)' : 'rgba(255,255,255,0.10)'}`">
-            </div>
+                <!-- Bottom-right: Network logo -->
+                <div style="position:absolute;bottom:16px;right:18px">
+                  <!-- VISA logo -->
+                  <template x-if="cardNetwork(t) === 'visa'">
+                    <svg viewBox="0 0 80 28" width="54" height="19" style="display:block">
+                      <text x="1" y="24" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="900" font-size="26" fill="#FFFFFF" letter-spacing="-1">VISA</text>
+                    </svg>
+                  </template>
+                  <!-- AMEX logo -->
+                  <template x-if="cardNetwork(t) === 'amex'">
+                    <svg viewBox="0 0 62 44" width="50" height="36" style="display:block">
+                      <rect width="62" height="44" rx="5" fill="#2E77BC"/>
+                      <text x="31" y="19" text-anchor="middle" font-family="'Arial','Helvetica',sans-serif" font-size="9" font-weight="700" fill="white" letter-spacing="0.4">AMERICAN</text>
+                      <text x="31" y="32" text-anchor="middle" font-family="'Arial','Helvetica',sans-serif" font-size="9" font-weight="700" fill="white" letter-spacing="0.4">EXPRESS</text>
+                    </svg>
+                  </template>
+                </div>
+
+              </div>
+            </template>
+
+            <!-- ═══ SANTANDER card ═══ -->
+            <template x-if="cardTheme(t) === 'santander'">
+              <div style="position:absolute;inset:0;overflow:hidden">
+
+                <!-- Top-left: "Crédito" label -->
+                <div style="position:absolute;top:18px;left:20px;font-size:11px;color:rgba(30,30,30,0.55);font-weight:400;letter-spacing:0.01em">Crédito</div>
+
+                <!-- Top-right: Santander logo -->
+                <div style="position:absolute;top:13px;right:18px;display:flex;align-items:center;gap:6px">
+                  <!-- Santander flame SVG -->
+                  <svg viewBox="0 0 24 34" width="16" height="23" style="display:block;flex-shrink:0">
+                    <path d="M12 32C12 32 2 23 2 15C2 8 7 2 12 1C17 2 22 8 22 15C22 23 12 32 12 32Z" fill="#EC0000"/>
+                    <path d="M12 28C12 28 5 21 5 15C5 10 8 5 12 4C16 5 19 10 19 15C19 21 12 28 12 28Z" fill="#C40000"/>
+                    <path d="M12 22C12 22 8 18 8 15C8 12 10 9 12 8C14 9 16 12 16 15C16 18 12 22 12 22Z" fill="#A00000"/>
+                  </svg>
+                  <!-- Santander text + PLATINUM -->
+                  <div>
+                    <div style="font-size:12px;font-weight:700;color:#1A1A1F;letter-spacing:-0.01em;line-height:1">Santander</div>
+                    <div style="font-size:7px;font-weight:500;color:#5A5A5A;letter-spacing:0.16em;text-transform:uppercase;margin-top:2px">Platinum</div>
+                  </div>
+                </div>
+
+                <!-- Subtle metallic shine -->
+                <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,0.35) 0%,transparent 50%,rgba(0,0,0,0.06) 100%);pointer-events:none"></div>
+
+                <!-- Bottom-right: Network logo -->
+                <div style="position:absolute;bottom:16px;right:18px">
+                  <!-- VISA logo -->
+                  <template x-if="cardNetwork(t) === 'visa'">
+                    <svg viewBox="0 0 80 28" width="54" height="19" style="display:block">
+                      <text x="1" y="24" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="900" font-size="26" fill="#1A1F71" letter-spacing="-1">VISA</text>
+                    </svg>
+                  </template>
+                  <!-- AMEX logo -->
+                  <template x-if="cardNetwork(t) === 'amex'">
+                    <svg viewBox="0 0 62 44" width="50" height="36" style="display:block">
+                      <rect width="62" height="44" rx="5" fill="#2E77BC"/>
+                      <text x="31" y="19" text-anchor="middle" font-family="'Arial','Helvetica',sans-serif" font-size="9" font-weight="700" fill="white" letter-spacing="0.4">AMERICAN</text>
+                      <text x="31" y="32" text-anchor="middle" font-family="'Arial','Helvetica',sans-serif" font-size="9" font-weight="700" fill="white" letter-spacing="0.4">EXPRESS</text>
+                    </svg>
+                  </template>
+                </div>
+
+              </div>
+            </template>
+
           </div>
         </template>
       </div>

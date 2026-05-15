@@ -189,30 +189,14 @@ function tarjetasApp() {
 
     // ── Card theme ───────────────────────────────────────────
     cardTheme(t) {
-      const isSantander = (t.banco || '').toLowerCase().includes('santander');
-      return isSantander ? 'santander' : 'macro';
+      return (t.banco || '').toLowerCase().includes('santander') ? 'santander' : 'macro';
     },
 
     cardBg(t) {
-      const theme = this.cardTheme(t);
-      if (theme === 'santander') {
-        return 'linear-gradient(135deg, #E6E4DE 0%, #BFBDB6 45%, #D8D5CE 80%, #A8A6A0 100%)';
+      if (this.cardTheme(t) === 'santander') {
+        return 'linear-gradient(150deg, #D4D2CC 0%, #BEBCB6 40%, #CFCDC7 72%, #ABAAA4 100%)';
       }
-      return 'linear-gradient(135deg, #0E0E12 0%, #181820 60%, #0B0B10 100%)';
-    },
-
-    cardInk(t) {
-      return this.cardTheme(t) === 'santander' ? '#1A1A1F' : '#FFFFFF';
-    },
-
-    cardSub(t) {
-      return this.cardTheme(t) === 'santander'
-        ? 'rgba(26,26,31,0.55)'
-        : 'rgba(255,255,255,0.55)';
-    },
-
-    cardAccent(t) {
-      return this.cardTheme(t) === 'santander' ? '#1A1A1F' : '#C9A961';
+      return '#141414';
     },
 
     cardNetwork(t) {
