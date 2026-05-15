@@ -173,23 +173,24 @@ function getResumenTarjetas() {
       diasVencimiento = Math.round((fv - ahora) / 86400000);
     }
 
+    // ── Saldos y deuda total ──
+    const saldoArs = Number(t.saldo_pendiente_ars || 0);
+    const saldoUsd = Number(t.saldo_pendiente_usd || 0);
+
     // ── Alertas ──
     const alertas = [];
     if (diasCierre !== null) {
-      if (diasCierre === 0)                         alertas.push('cierre_hoy');
-      if (diasCierre === -1 || diasCierre === -2)   alertas.push('revisar_resumen');   // 1-2 días post cierre
+      if (diasCierre === 0)                              alertas.push('cierre_hoy');
+      if (diasCierre === -1 || diasCierre === -2)        alertas.push('revisar_resumen');
     }
     if (diasVencimiento !== null) {
-      if (diasVencimiento === 0)                    alertas.push('vencimiento_hoy');
+      if (diasVencimiento === 0)                         alertas.push('vencimiento_hoy');
       if (diasVencimiento === 1 || diasVencimiento === 2) alertas.push('vencimiento_proximo');
-      if (diasVencimiento < 0 && saldoArs > 0)       alertas.push('vencimiento_pasado');  // solo si queda saldo impago
+      if (diasVencimiento < 0 && saldoArs > 0)           alertas.push('vencimiento_pasado');
     }
-    // Alerta especial: tiene deuda en USD
-    if (Number(t.saldo_pendiente_usd || 0) > 0)    alertas.push('deuda_usd');
+    if (saldoUsd > 0)                                    alertas.push('deuda_usd');
 
     // ── Deuda total en USD equivalente ──
-    const saldoArs = Number(t.saldo_pendiente_ars || 0);
-    const saldoUsd = Number(t.saldo_pendiente_usd || 0);
     const cotiz    = cotizacion ? cotizacion.promedio : null;
     const deudaTotalUsd = saldoUsd + (cotiz ? saldoArs / cotiz : 0);
 
