@@ -54,6 +54,9 @@ function formApp() {
     // ---- Último movimiento guardado (para deshacer) ----
     ultimoGuardado: null,
 
+    // ---- Swipe state (keyed by movimiento id) ----
+    swipeState: {},
+
     // ============================================================
     // INIT
     // ============================================================
@@ -292,6 +295,77 @@ function formApp() {
         this.form.medio_pago = mv.medio_pago || '';
         this.form.quien_gasto = mv.quien_gasto || 'Conjunto';
         // No copiar el monto — usuario lo edita
+      });
+    },
+
+    // ============================================================
+    // SWIPE ACTIONS (últimos movimientos)
+    // ============================================================
+    swipeStart(e, id) {
+      // Cierra cualquier otro swipe abierto
+      Object.keys(this.swipeState).forEach(k => {
+        if (k !== String(id)) this.swipeState[k] = { offset: 0, dragging: false, direction: null };
+      });
+      const t = e.touches[0];
+      this.swipeState[id] = {
+        offset:    this.swipeState[id]?.offset || 0,
+        dragging:  true,
+        startX:    t.clientX,
+        startY:    t.clientY,
+        direction: null,
+      };
+    },
+
+    swipeMove(e, id) {
+      const s = this.swipeState[id];
+      if (!s || !s.dragging) return;
+      const t  = e.touches[0];
+      const dx = t.clientX - s.startX;
+      const dy = t.clientY - s.startY;
+      // Detectar dirección al inicio del gesto
+      if (s.direction === null) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          s.direction = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+        }
+        return;
+      }
+      if (s.direction === 'v') { s.dragging = false; return; }
+      // Es horizontal → prevenir scroll y mover
+      e.preventDefault();
+      const max = 100;
+      s.offset = Math.max(-max, Math.min(max, dx));
+    },
+
+    swipeEnd(e, id) {
+      const s = this.swipeState[id];
+      if (!s) return;
+      s.dragging = false;
+      const SNAP = 68;
+      if      (s.offset >  SNAP) s.offset =  90; // lock dup
+      else if (s.offset < -SNAP) s.offset = -90; // lock del
+      else                       s.offset =   0; // volver
+    },
+
+    swipeOffset(id) { return this.swipeState[id]?.offset || 0; },
+    swipeDragging(id) { return !!(this.swipeState[id]?.dragging); },
+
+    swipeReset(id) {
+      if (this.swipeState[id]) this.swipeState[id].offset = 0;
+    },
+
+    swipeConfirmDup(id) {
+      const mv = this.ultimosMovimientos.find(m => m.id === id);
+      if (mv) this.duplicar(mv);
+      this.swipeReset(id);
+    },
+
+    swipeConfirmDel(id) {
+      // Quitar de la lista local inmediatamente (optimista)
+      this.ultimosMovimientos = this.ultimosMovimientos.filter(m => m.id !== id);
+      delete this.swipeState[id];
+      // Llamar a la API (requiere acción 'eliminar_movimiento' en Apps Script)
+      api.post('eliminar_movimiento', { id }).catch(() => {
+        console.warn('No se pudo eliminar del servidor. Verificá el Apps Script.');
       });
     },
 
