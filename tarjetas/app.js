@@ -152,24 +152,37 @@ function tarjetasApp() {
     },
 
     // ── Timeline ─────────────────────────────────────────────
-    // Devuelve posición 0..1 del marcador en la barra
+    // Devuelve los 3 hitos en orden cronológico: [izq, centro, der]
+    // Maneja el caso donde próx.cierre viene antes o después del vencimiento
+    timelineAnchors(t) {
+      const cierre = t.ultimo_cierre || this.estimarUltimoCierre(t);
+      const venc   = t.proximo_vencimiento;
+      const prox   = t.proximo_cierre;
+      const toMs   = iso => new Date(iso + 'T12:00:00-03:00').getTime();
+      const vencPrimero = venc && prox && toMs(venc) <= toMs(prox);
+      return [
+        { fecha: cierre, label: 'Cierre' },
+        vencPrimero
+          ? { fecha: venc,  label: 'Vencimiento' }
+          : { fecha: prox,  label: 'Próx. cierre' },
+        vencPrimero
+          ? { fecha: prox,  label: 'Próx. cierre' }
+          : { fecha: venc,  label: 'Vencimiento'  },
+      ];
+    },
+
+    // Posición 0..1 del marcador usando el orden cronológico real
     timelinePos(t) {
-      const cierre    = t.ultimo_cierre   || this.estimarUltimoCierre(t);
-      const venc      = t.proximo_vencimiento;
-      const proxCierr = t.proximo_cierre;
-      if (!cierre || !venc || !proxCierr) return 0;
-
+      const [a, b, c] = this.timelineAnchors(t);
+      if (!a.fecha || !b.fecha || !c.fecha) return 0;
       const toD = iso => new Date(iso + 'T12:00:00-03:00').getTime() / 86400000;
-      const tC = toD(cierre);
-      const tV = toD(venc);
-      const tP = toD(proxCierr);
+      const tA = toD(a.fecha), tB = toD(b.fecha), tC = toD(c.fecha);
       const tH = toD(this.hoy());
-
       let pos;
-      if (tH <= tC)   pos = 0;
-      else if (tH >= tP) pos = 1;
-      else if (tH <= tV) pos = 0.5 * (tH - tC) / (tV - tC);
-      else               pos = 0.5 + 0.5 * (tH - tV) / (tP - tV);
+      if      (tH <= tA) pos = 0;
+      else if (tH >= tC) pos = 1;
+      else if (tH <= tB) pos = 0.5 * (tH - tA) / (tB - tA);
+      else               pos = 0.5 + 0.5 * (tH - tB) / (tC - tB);
       return Math.max(0, Math.min(1, pos));
     },
 

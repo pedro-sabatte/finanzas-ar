@@ -549,11 +549,14 @@
 
         <!-- Fechas -->
         <div class="timeline-dates">
-          <div class="timeline-date left" x-text="fmtFecha(activeTarjeta.ultimo_cierre || estimarUltimoCierre(activeTarjeta))"></div>
+          <div class="timeline-date left"
+            x-text="fmtFecha(timelineAnchors(activeTarjeta)[0].fecha)"></div>
           <div class="timeline-date mid"
-            :style="isVencimientoHoy(activeTarjeta) ? 'color:var(--alert)' : ''"
-            x-text="fmtFecha(activeTarjeta.proximo_vencimiento)"></div>
-          <div class="timeline-date right" x-text="fmtFecha(activeTarjeta.proximo_cierre)"></div>
+            :style="isVencimientoHoy(activeTarjeta) && timelineAnchors(activeTarjeta)[1].label === 'Vencimiento' ? 'color:var(--alert)' : ''"
+            x-text="fmtFecha(timelineAnchors(activeTarjeta)[1].fecha)"></div>
+          <div class="timeline-date right"
+            :style="isVencimientoHoy(activeTarjeta) && timelineAnchors(activeTarjeta)[2].label === 'Vencimiento' ? 'color:var(--alert)' : ''"
+            x-text="fmtFecha(timelineAnchors(activeTarjeta)[2].fecha)"></div>
         </div>
 
         <!-- Barra -->
@@ -585,12 +588,14 @@
 
         <!-- Labels -->
         <div class="timeline-labels">
-          <div class="timeline-lbl left">Cierre</div>
+          <div class="timeline-lbl left"
+            x-text="timelineAnchors(activeTarjeta)[0].label"></div>
           <div class="timeline-lbl mid"
-            :style="isVencimientoHoy(activeTarjeta) ? 'color:var(--alert)' : ''">
-            Vencimiento
-          </div>
-          <div class="timeline-lbl right">Próx. cierre</div>
+            :style="isVencimientoHoy(activeTarjeta) && timelineAnchors(activeTarjeta)[1].label === 'Vencimiento' ? 'color:var(--alert)' : ''"
+            x-text="timelineAnchors(activeTarjeta)[1].label"></div>
+          <div class="timeline-lbl right"
+            :style="isVencimientoHoy(activeTarjeta) && timelineAnchors(activeTarjeta)[2].label === 'Vencimiento' ? 'color:var(--alert)' : ''"
+            x-text="timelineAnchors(activeTarjeta)[2].label"></div>
         </div>
       </div>
     </template>
