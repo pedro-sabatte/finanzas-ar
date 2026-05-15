@@ -16,6 +16,11 @@ function tarjetasApp() {
     isDragging: false,
     dragDirection: null,   // 'h' | 'v' | null
 
+    // Sheet consumos
+    showMovs: false,
+    sheetMovs: [],
+    sheetTarjeta: null,
+
     // ── Init ────────────────────────────────────────────────
     async init() {
       await this.cargar();
@@ -103,6 +108,15 @@ function tarjetasApp() {
       if (idx >= 0 && idx < this.tarjetas.length) {
         this.activeIdx = idx;
       }
+    },
+
+    // ── Sheet consumos ───────────────────────────────────────
+    abrirMovimientos() {
+      const t = this.activeTarjeta;
+      if (!t) return;
+      this.sheetTarjeta = t;
+      this.sheetMovs = t.movimientos_ciclo || [];
+      this.showMovs = true;
     },
 
     // ── Card theme ───────────────────────────────────────────
